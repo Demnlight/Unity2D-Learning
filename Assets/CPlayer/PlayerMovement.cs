@@ -1,79 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
-    // Update is called once per frame
-    static public void Update( BasePlayer pPlayer ) {
-
+    static public void CalculateMoveData( BasePlayer pPlayer ) {
         float flAxisRawHorizontal = Input.GetAxisRaw( "Horizontal" );
         float flAxisRawVertical = Input.GetAxisRaw( "Vertical" );
 
-        //Move Left
-        //if ( AxisRawHorizontal < 0 ) {
-        //    pPlayer.flSideMove = -1.0f;
-        //} else if ( AxisRawHorizontal > 0 ) {
-        //    pPlayer.flSideMove = 1.0f;
-        //} else
-        //    pPlayer.flSideMove = 0.0f;
+        pPlayer.flSideMove = flAxisRawHorizontal;
+        pPlayer.flForwardMove = flAxisRawVertical;
+        pPlayer.vMovingDirection = new Vector2( pPlayer.flSideMove, pPlayer.flForwardMove );
 
-        //if ( AxisRawVertical < 0 ) {
-        //    pPlayer.flForwardMove = -1.0f;
-        //} else if ( AxisRawVertical > 0 ) {
-        //    pPlayer.flForwardMove = 1.0f;
-        //} else
-        //    pPlayer.flForwardMove = 0.0f;
+        if (pPlayer.vMovingDirection != pPlayer.vLastMovingDirection) {
+            pPlayer.bChangedDirection = true;
+            //if ( pPlayer.flAcceleration >= 10.0f )
+            //    pPlayer.flGlideTime = 1.0f;
+        } else
+            pPlayer.bChangedDirection = false;
 
-        if ( !pPlayer.bIsSliding ) {
-            pPlayer.flSideMove = flAxisRawHorizontal;
-            pPlayer.flForwardMove = flAxisRawVertical;
-
-            pPlayer.vMovingDirection = new Vector2( pPlayer.flSideMove, pPlayer.flForwardMove );
-        }
-
-        if ( pPlayer.vMovingDirection != pPlayer.vLastMovingDirection ) {
-            pPlayer.vLastMovingDirection = pPlayer.vMovingDirection;
-            pPlayer.vLastVelocity = pPlayer.vVelocity;
-            pPlayer.flStopTime = pPlayer.flAcceleration / 250.0f;
-            pPlayer.bIsSliding = true;
-            pPlayer.bIsMoving = false;
-
-            pPlayer.pAnimator.SetTrigger( "OnPlayerStop" );
-        }
-
-        if ( !pPlayer.bIsSliding ) {
-
-            if ( pPlayer.flSideMove > 0.0f || pPlayer.flSideMove < 0.0f || pPlayer.flForwardMove > 0.0f || pPlayer.flForwardMove < 0.0f ) {
-                pPlayer.bIsMoving = true;
-                pPlayer.flTimeSinceStartMoving += 1.0f * Time.deltaTime;
-
-                pPlayer.flAcceleration = Mathf.Lerp( pPlayer.flAcceleration, 250.0f, pPlayer.flTimeSinceStartMoving / 5 );
-
-            } else {
-                pPlayer.flAcceleration = Mathf.Lerp( pPlayer.flAcceleration, 0.0f, 1.0f - pPlayer.flStopTime );
-                pPlayer.bIsMoving = false;
-                pPlayer.flTimeSinceStartMoving = 0.0f;
-            }
-
-            pPlayer.pAnimator.SetFloat( "flRunningAnimationSpeed", pPlayer.flAcceleration / 250.0f );
-        }
-
-        if ( pPlayer.flStopTime > 0.0f ) {
-            pPlayer.flStopTime -= 1.0f * Time.deltaTime;
-            pPlayer.flStopTime = Mathf.Clamp( pPlayer.flStopTime, 0.0f, 1.0f );
-
-            Vector2 vStopVelocity = pPlayer.vLastVelocity * 1000 * ( pPlayer.flAcceleration / 250.0f );
-
-            pPlayer.pRigiBody.AddForce( vStopVelocity, ForceMode2D.Force );
-            Debug.LogFormat( "AddForce to BasePlayer. [ {0}, {1} ]", vStopVelocity.x, vStopVelocity.y );
-
+        if (pPlayer.vMovingDirection != Vector2.zero && pPlayer.flGlideTime <= 0.0f) {
+            pPlayer.nPlayerState = BasePlayer.ePlayerState.MOVING;
+            pPlayer.flAcceleration = Mathf.Lerp( pPlayer.flAcceleration, pPlayer.flMaxSpeed, pPlayer.flTimeSinceStartMoving / 3 );
+            pPlayer.flTimeSinceStartMoving += 1.0f * Time.deltaTime;
         } else {
-            pPlayer.bIsSliding = false;
+            pPlayer.nPlayerState = BasePlayer.ePlayerState.IDLE;
+            pPlayer.flTimeSinceStartMoving = 0.0f;
+            pPlayer.flAcceleration = 0;
         }
 
-        pPlayer.pAnimator.SetBool( "isRun", pPlayer.bIsMoving );
-        pPlayer.pAnimator.SetBool( "isSliding", pPlayer.bIsSliding );
+        pPlayer.vVelocity = pPlayer.CalcVelocity( );
 
+        pPlayer.pAnimator.SetBool( "IsRunning", pPlayer.vVelocity != Vector2.zero );
+        pPlayer.pAnimator.SetFloat( "flRunningAnimationSpeed", pPlayer.flAcceleration / pPlayer.flMaxSpeed );
+
+        if (pPlayer.vMovingDirection.x != 0.0f)
+            pPlayer.transform.localScale = new Vector3( pPlayer.vMovingDirection.x, 1, 1 );
+
+        pPlayer.vLastMovingDirection = pPlayer.vMovingDirection;
+        pPlayer.vLastVelocity = pPlayer.vVelocity;
         pPlayer.flLastForwardMove = pPlayer.flForwardMove;
         pPlayer.flLastSideMove = pPlayer.flSideMove;
     }
