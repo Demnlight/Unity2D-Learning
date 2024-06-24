@@ -7,8 +7,8 @@ public struct TileData_t {
 }
 
 public class MapGenetator : MonoBehaviour {
-    public int nWidth = 0;
-    public int nHeight = 0;
+    static public int nWidth = 250;
+    static public int nHeight = 250;
     public Tilemap pGroundTileMap = null;
     public Tilemap pWaterTileMap = null;
     public Tilemap pWaterShadowTileMap = null;
