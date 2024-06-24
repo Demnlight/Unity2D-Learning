@@ -155,7 +155,6 @@ public class MapGenetator : MonoBehaviour {
                 heightMap.SetPixel( i, j, colour );
             }
         }
-
         return heightMap;
     }
 
