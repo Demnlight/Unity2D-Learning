@@ -60,6 +60,7 @@ sysinfo.txt
 
 *.vsconfig
 *.DB_Store
+*.DS_Store
 
 # Crashlytics generated file
 crashlytics-build.properties
