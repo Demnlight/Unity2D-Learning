@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour {
         pPlayer.pAnimator.SetBool( "IsRunning", pPlayer.vVelocity != Vector2.zero );
         pPlayer.pAnimator.SetFloat( "flRunningAnimationSpeed", pPlayer.flAcceleration / pPlayer.flMaxSpeed );
 
-        if (pPlayer.vMovingDirection.x != 0.0f)
+        if (pPlayer.vMovingDirection.x != 0.0f )
             pPlayer.transform.localScale = new Vector3( pPlayer.vMovingDirection.x, 1, 1 );
 
         pPlayer.vLastMovingDirection = pPlayer.vMovingDirection;

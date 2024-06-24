@@ -7,8 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WaterMaterialNew
-  m_Shader: {fileID: -6465566751694194690, guid: d6ae73b21a1d149b1ad593659b97ef29, type: 3}
+  m_Name: WaterMaterial
+  m_Shader: {fileID: -6465566751694194690, guid: d6ae73b21a1d149b1ad593659b97ef29,
+    type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -84,7 +85,7 @@ Material:
     - _CausticScale: 0.08
     - _CausticSpeed: 0.8
     - _CausticSquashAmount: 1.3
-    - _CurrentWorldTextureScale: 0.005681818
+    - _CurrentWorldTextureScale: 0.004
     - _FoamBlurAmount: 5
     - _FoamScale: 0.16
     - _Pixelization: 16
@@ -95,10 +96,10 @@ Material:
     m_Colors:
     - _CausticColour: {r: 0.45490196, g: 0.77254903, b: 0.7647059, a: 0.12156863}
     - _CausticHighlightColour: {r: 1, g: 1, b: 1, a: 0.36862746}
-    - _CurrentWorldTexturePos: {r: -48, g: 3792, b: 0, a: 0}
+    - _CurrentWorldTexturePos: {r: -125, g: -125, b: 0, a: 0}
     - _FoamColour: {r: 1, g: 1, b: 1, a: 1}
     - _FoamTexelSize: {r: 0.005, g: 0.005, b: 0, a: 0}
-    - _MainColour: {r: 0.24251999, g: 0.5171283, b: 0.645, a: 0.5254902}
+    - _MainColour: {r: 0.44499823, g: 0.6579299, b: 0.754717, a: 1}
     - _SpecularColour: {r: 1, g: 1, b: 1, a: 0.87058824}
   m_BuildTextureStacks: []
 --- !u!114 &1576172767386937083
