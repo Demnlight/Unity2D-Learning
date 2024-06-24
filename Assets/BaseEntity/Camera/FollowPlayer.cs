@@ -4,14 +4,12 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Video;
 
-public class FollowPlayer : MonoBehaviour
-{
+public class FollowPlayer : MonoBehaviour {
     public Transform pTarget = null;
     private Vector3 vDelta;
     private Vector3 vTargetPos;
 
-    public void Start()
-    {
+    public void Start( ) {
         if (pTarget == null)
             return;
 
@@ -19,15 +17,14 @@ public class FollowPlayer : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
-    {
+    void FixedUpdate( ) {
         if (pTarget == null)
             return;
 
         vTargetPos = pTarget.position + vDelta;
-        float flDistance2D = Vector3.Distance(this.transform.position, vTargetPos);
+        float flDistance2D = Vector3.Distance( this.transform.position, vTargetPos );
 
-        float flProgress = math.max(1.0f, flDistance2D);
+        float flProgress = math.max( 1.0f, flDistance2D );
 
         this.transform.position = Vector3.LerpUnclamped(
             this.transform.position,
