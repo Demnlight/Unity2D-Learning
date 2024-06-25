@@ -10,13 +10,14 @@ public struct Chunk_t {
     public float[ , ] Heights;
     public bool bVisible;
     public Texture2D pHeightTexture;
+    public Tilemap pLayer1TileMap;
+    public Tilemap pLayer2TileMap;
+    public GameObject gameObject;
 }
 
 public class MapGenetator : MonoBehaviour {
     public TileBase pSandTile = null;
     public TileBase pWaterTile = null;
-    public Tilemap pVisibleTileMap = null;
-    public Tilemap pUnderWaterTileMap = null;
     public Material pWaterMaterial = null;
     public int ChunkSize = 16;
     public float PerlinScale = 48.0f;
@@ -81,9 +82,11 @@ public class MapGenetator : MonoBehaviour {
         if (!PositionIsNew( vNewChunkPos ))
             return;
 
+        Debug.Log( "Chunks Updating!" );
+        //foreach (Chunk_t chunk in this.aVisibleChunks) {
+        //    Destroy( chunk.gameObject );
+        //}
         this.aVisibleChunks.Clear( );
-        this.pVisibleTileMap.ClearAllTiles( );
-
         foreach (Vector2Int vChunkOffset in aNearestChunksPos) {
             Chunk_t offsetChunk = GetChunk(
                 vNewChunkPos.x + vChunkOffset.x * ChunkSize,
@@ -99,40 +102,107 @@ public class MapGenetator : MonoBehaviour {
         return (vLastChunkPos != position);
     }
 
+    private void CreateChunkObject( Chunk_t pChunk ) {
+        pChunk.gameObject = new GameObject( );
+        pChunk.gameObject.name = "Chunk{" + pChunk.vPos.x + "," + pChunk.vPos.y + "}";
+        pChunk.gameObject.transform.SetParent( gameObject.transform );
+
+        GameObject TileMapLayer1 = new GameObject( "TileMapLayer1" );
+        GameObject TileMapLayer2 = new GameObject( "TileMapLayer2" );
+
+        TileMapLayer1.transform.SetParent( pChunk.gameObject.transform );
+        TileMapLayer2.transform.SetParent( pChunk.gameObject.transform );
+
+        pChunk.pLayer1TileMap = TileMapLayer1.AddComponent<Tilemap>( );
+        {
+            TilemapRenderer pRenderer = TileMapLayer1.AddComponent<TilemapRenderer>( );
+            pRenderer.material = pWaterMaterial;
+
+            Vector2 vMapPos = pChunk.vPos;
+            pRenderer.material.SetTexture( "_HeightMap", pChunk.pHeightTexture );
+            pRenderer.material.SetFloat( "_CurrentWorldTextureScale", 1.0f / ChunkSize );
+            pRenderer.material.SetVector( "_CurrentWorldTexturePos", vMapPos );
+        }
+        pChunk.pLayer2TileMap = TileMapLayer2.AddComponent<Tilemap>( );
+        {
+            TileMapLayer2.AddComponent<TilemapRenderer>( );
+        }
+    }
+
     public void GenerateChunk( int x, int y ) {
         Vector2Int vChunkPos = new Vector2Int( x, y );
         if (!this.aAllChunks.ContainsKey( vChunkPos )) {
             Chunk_t pNewChunk = new Chunk_t( );
+
             pNewChunk.vPos = vChunkPos;
             pNewChunk.Heights = new float[ ChunkSize, ChunkSize ];
-            GenerateChunkData( pNewChunk );
+            this.GenerateChunkData( pNewChunk );
 
             pNewChunk.pHeightTexture = this.GenerateHeightMapTexture( pNewChunk );
             if (pNewChunk.pHeightTexture) {
                 pNewChunk.pHeightTexture.Apply( );
-
-                Vector2 vMapPos = pNewChunk.vPos;
-                pWaterMaterial.SetTexture( "_HeightMap", pNewChunk.pHeightTexture );
-                pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / ChunkSize );
-                pWaterMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
             }
 
-            //this.FillTiles( pNewChunk );
+            pNewChunk.gameObject = new GameObject( );
+            pNewChunk.gameObject.name = "Chunk{" + pNewChunk.vPos.x + "," + pNewChunk.vPos.y + "}";
+            pNewChunk.gameObject.transform.SetParent( gameObject.transform );
+
+            GameObject TileMapLayer1 = new GameObject( "TileMapLayer1" );
+            GameObject TileMapLayer2 = new GameObject( "TileMapLayer2" );
+
+            TileMapLayer1.transform.SetParent( pNewChunk.gameObject.transform );
+            TileMapLayer2.transform.SetParent( pNewChunk.gameObject.transform );
+
+            pNewChunk.pLayer1TileMap = TileMapLayer1.AddComponent<Tilemap>( );
+            {
+                TilemapRenderer pRenderer = TileMapLayer1.AddComponent<TilemapRenderer>( );
+                pRenderer.material = pWaterMaterial;
+
+                Vector2 vMapPos = pNewChunk.vPos;
+                pRenderer.material.SetTexture( "_HeightMap", pNewChunk.pHeightTexture );
+                pRenderer.material.SetFloat( "_CurrentWorldTextureScale", 1.0f / ChunkSize );
+                pRenderer.material.SetVector( "_CurrentWorldTexturePos", vMapPos );
+            }
+            pNewChunk.pLayer2TileMap = TileMapLayer2.AddComponent<Tilemap>( );
+            {
+                TilemapRenderer pRenderer = TileMapLayer2.AddComponent<TilemapRenderer>( );
+                TileMapLayer2.transform.position = new Vector3(0, 0, 0.1f);
+            }
+
+            this.FillTiles( pNewChunk );
             this.aAllChunks.Add( vChunkPos, pNewChunk );
         }
     }
 
     void FillTiles( Chunk_t pChunk ) {
-        TileBase[ ] pTiles = new TileBase[ ChunkSize * ChunkSize ];
-        //TileBase[ ] pTilesUnderWater = new TileBase[ ChunkSize * ChunkSize ];
+        if (!pChunk.pLayer1TileMap || !pChunk.pLayer2TileMap)
+            return;
+
+        pChunk.pLayer1TileMap.ClearAllTiles( );
+        pChunk.pLayer2TileMap.ClearAllTiles( );
+
+        TileBase[ ] pTilesLayer1 = new TileBase[ ChunkSize * ChunkSize ];
+        TileBase[ ] pTilesLayer2 = new TileBase[ ChunkSize * ChunkSize ];
         int LocalX = 0;
         int LocalY = 0;
-        for (int i = 0 ; i < pTiles.Length ; i++) {
+        for (int i = 0 ; i < pTilesLayer1.Length ; i++) {
             if (LocalY > ChunkSize - 1) {
                 LocalX += 1;
                 LocalY = 0;
             }
-            pTiles[ i ] = pSandTile;
+
+            float flHeight = pChunk.Heights[ LocalX, LocalY ];
+            if (flHeight > 0.65f) {
+                pTilesLayer2[ i ] = pSandTile;
+            } else {
+                pTilesLayer1[ i ] = pWaterTile;
+                pTilesLayer2[ i ] = pSandTile;
+            }
+
+            /*Vector3Int vLocalPos = new Vector3Int( pChunk.vPos.x + LocalX, pChunk.vPos.y + LocalY, 0 );
+            Color cPixel = new Color( flHeight, flHeight, flHeight, 1 );
+            this.pLayer2TileMap.SetTileFlags( vLocalPos, TileFlags.None );
+            this.pLayer2TileMap.SetColor( vLocalPos, cPixel );*/
             LocalY++;
         }
         BoundsInt bounds = new BoundsInt(
@@ -143,12 +213,15 @@ public class MapGenetator : MonoBehaviour {
             ChunkSize,
             1
         );
-        this.pVisibleTileMap.SetTilesBlock( bounds, pTiles );
+
+        pChunk.pLayer1TileMap.SetTilesBlock( bounds, pTilesLayer1 );
+        pChunk.pLayer2TileMap.SetTilesBlock( bounds, pTilesLayer2 );
     }
 
     public Chunk_t GetChunk( int x, int y ) {
         Vector2Int vChunkPos = new Vector2Int( x, y );
         if (this.aAllChunks.ContainsKey( vChunkPos )) {
+            //FillTiles( this.aAllChunks[ vChunkPos ] );
             return this.aAllChunks[ vChunkPos ];
         } else {
             GenerateChunk( x, y );
