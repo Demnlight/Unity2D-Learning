@@ -1,10 +1,14 @@
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
 
-public struct TileData_t {
-    public float nTemperature;
-    public float nHeight;
+struct Chunk_t {
+    public Vector2Int vPos;
+    public Vector2Int vSize;
+    public float[ , ] aHeights;
+    public Texture2D pHeightTexture;
 }
 
 public class MapGenetator : MonoBehaviour {
@@ -12,31 +16,59 @@ public class MapGenetator : MonoBehaviour {
     public Material pWaterMaterial = null;
     public Material pSandMaterial = null;
 
-    public int nMapSize = 256;
     public Tilemap pSandTileMap = null;
     public Tilemap pWaterTileMap = null;
 
     public TileBase pSandTile = null;
     public TileBase pWaterTile = null;
 
-    private TileData_t[ , ] pTerrainMap;
-
-    private int seed = 698512;
-    public int octaves = 20;
-    private float lacunarity = 1;
-    private float persistance = 1;
-    public float scale = 75;
-    private float flWaterSmooth = 0.145f;
+    private List<Chunk_t> aActiveChunks = new List<Chunk_t>( );
+    public int nChunkSize = 16;
 
     public void Start( ) {
         if (pWaterTileMap == null || pSandTileMap == null)
             return;
 
-        this.GenerateMap( );
-        this.transform.position = new Vector3( -nMapSize / 2, -nMapSize / 2, 0 );
+        for (int x = 0 ; x < 4 ; x++) {
+            for (int y = 0 ; y > -4 ; y++) {
+                this.aActiveChunks.Add( CreateChunk( x * nChunkSize, y * nChunkSize ) );
+            }
+        }
     }
+    private Chunk_t CreateChunk( int nStartX, int nStartY ) {
+        Chunk_t pNewChunk = new Chunk_t( );
+        pNewChunk.vPos = new Vector2Int( nStartX, nStartY );
+        pNewChunk.vSize = new Vector2Int( nChunkSize, nChunkSize );
 
-    public void CreateHeightMap( ) {
+        pNewChunk.aHeights = new float[ nChunkSize, nChunkSize ];
+        for (int x = 0 ; x < pNewChunk.aHeights.GetLength( 0 ) ; x++) {
+            for (int y = 0 ; y < pNewChunk.aHeights.GetLength( 1 ) ; y++) {
+                pNewChunk.aHeights[ x, y ] = GetMapHeight( x, y, pNewChunk.vPos );
+            }
+        }
+        this.GenerateHeightMap( pNewChunk );
+        return pNewChunk;
+    }
+    private float GetMapHeight( int x, int y, Vector2Int vChunkPos ) {
+        float flHeight = 0.0f;
+
+        float flSampleX = ((float)x) / nChunkSize;
+        float flSampleY = ((float)y) / nChunkSize;
+        flHeight += Mathf.PerlinNoise( flSampleX, flSampleY );
+        return flHeight;
+    }
+    private void GenerateHeightMap( Chunk_t pChunk ) {
+        pChunk.pHeightTexture = new Texture2D( pChunk.vSize.x, pChunk.vSize.y );
+        for (int x = 0 ; x < pChunk.pHeightTexture.width ; x++) {
+            for (int y = 0 ; y < pChunk.pHeightTexture.height ; y++) {
+                float flHeight = pChunk.aHeights[ x, y ];
+                Color cPixel = new Color( flHeight, flHeight, flHeight, 1 );
+                pChunk.pHeightTexture.SetPixel( x, y, cPixel );
+            }
+        }
+        pChunk.pHeightTexture.Apply( );
+    }
+    /*public void CreateHeightMap( ) {
         this.pTerrainMap = new TileData_t[ nMapSize, nMapSize ];
 
         for (int i = 0 ; i < this.pTerrainMap.GetLength( 0 ) ; i++)
@@ -142,9 +174,6 @@ public class MapGenetator : MonoBehaviour {
             for (int j = 0 ; j < heightMap.width ; j++) {
                 float height = pTerrainMap[ i, j ].nHeight - this.flWaterSmooth;
                 Color colour = new Color( height, height, height, 1 );
-                if (height <= 0.15f)
-                    colour = Color.black;
-
                 heightMap.SetPixel( i, j, colour );
             }
         }
@@ -152,17 +181,17 @@ public class MapGenetator : MonoBehaviour {
     }
 
     private void Update( ) {
-        /*Vector3Int vMousePos = new Vector3Int(
+        Vector3Int vMousePos = new Vector3Int(
             (int)Input.mousePosition.x,
             (int)Input.mousePosition.y,
             (int)Input.mousePosition.z );
         var mouseWorldPos = Camera.main.ScreenToWorldPoint( vMousePos );
 
         TileData_t pTile = pTerrainMap[ nMapSize / 2 + (int)mouseWorldPos.x, nMapSize / 2 + (int)mouseWorldPos.y ];
-        Debug.Log( pTile.nHeight );*/
+        Debug.Log( pTile.nHeight );
     }
     public void ClearMap( ) {
         pWaterTileMap.ClearAllTiles( );
         pSandTileMap.ClearAllTiles( );
-    }
+    }*/
 }
