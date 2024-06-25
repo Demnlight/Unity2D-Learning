@@ -267,8 +267,8 @@ Transform:
   m_Children:
   - {fileID: 999667072}
   - {fileID: 1037404814}
-  - {fileID: 1575862965}
   - {fileID: 1659805619}
+  - {fileID: 1575862965}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &304237356
@@ -284,8 +284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pWaterMaterial: {fileID: 2100000, guid: 3376745178c2a45b7b67cd3a93406ffa, type: 2}
-  nWidth: 250
-  nHeight: 250
+  nMapSize: 256
   pGroundTileMap: {fileID: 1575862963}
   pSandTileMap: {fileID: 1659805617}
   pWaterTileMap: {fileID: 999667070}
@@ -294,12 +293,8 @@ MonoBehaviour:
   pGroundTile: {fileID: 11400000, guid: 9a1a49ad4a1ca49119b05ef99fb88ef6, type: 2}
   pWaterTile: {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
   pWaterShadowTile: {fileID: 11400000, guid: 148b01989c67c48bba21e7fabe42aefb, type: 2}
-  seed: 698512
-  octaves: 5
-  lacunarity: 1
-  persistance: 1
-  scale: 75
-  nGenerationDecorChance: 15
+  octaves: 12
+  scale: 64
 --- !u!1 &433522022
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -11,8 +10,7 @@ public class MapGenetator : MonoBehaviour {
 
     public Material pWaterMaterial = null;
 
-    public int nWidth = 250;
-    public int nHeight = 250;
+    public int nMapSize = 256;
     public Tilemap pGroundTileMap = null;
     public Tilemap pSandTileMap = null;
     public Tilemap pWaterTileMap = null;
@@ -23,26 +21,25 @@ public class MapGenetator : MonoBehaviour {
     public TileBase pWaterTile = null;
     public TileBase pWaterShadowTile = null;
 
-    public TileData_t[ , ] pTerrainMap;
+    private TileData_t[ , ] pTerrainMap;
 
-    public int seed = 698512;
+    private int seed = 698512;
     public int octaves = 20;
-    public float lacunarity = 1;
-    public float persistance = 1;
+    private float lacunarity = 1;
+    private float persistance = 1;
     public float scale = 75;
-    public float flWaterSmooth = 0.145f;
+    private float flWaterSmooth = 0.145f;
 
-    public int nGenerationDecorChance = 15;
     public void Start( ) {
         if (pGroundTileMap == null || pWaterShadowTileMap == null || pWaterTileMap == null)
             return;
 
         this.GenerateMap( );
-        this.transform.position -= new Vector3( nWidth / 2, nHeight / 2, 0 );
+        this.transform.position = new Vector3( -nMapSize / 2, -nMapSize / 2, 0 );
     }
 
     public void CreateHeightMap( ) {
-        this.pTerrainMap = new TileData_t[ nWidth, nHeight ];
+        this.pTerrainMap = new TileData_t[ nMapSize, nMapSize ];
 
         for (int i = 0 ; i < this.pTerrainMap.GetLength( 0 ) ; i++)
             for (int j = 0 ; j < this.pTerrainMap.GetLength( 1 ) ; j++)
@@ -52,6 +49,10 @@ public class MapGenetator : MonoBehaviour {
         if (pTexture != null) {
             pTexture.Apply( );
             pWaterMaterial.SetTexture( "_HeightMap", pTexture );
+            pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
+
+            Vector2 vMapPos = new Vector2( -nMapSize / 2, -nMapSize / 2 );
+            pWaterMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
         }
     }
 
@@ -70,13 +71,13 @@ public class MapGenetator : MonoBehaviour {
                 Vector3Int vNewTilePos = new Vector3Int( i, j, 0 );
                 TileData_t pTileData = this.pTerrainMap[ i, j ];
 
-                if (pTileData.nHeight > 0.50f) {
+                if (pTileData.nHeight > 0.45f) {
                     //ground, mountains, forest etc... [#TODO:Terrain]
-                    if (pTileData.nHeight < 0.52 || pTileData.nTemperature > 30) {
+                    if (pTileData.nHeight < 0.47) {
                         pSandTileMap.SetTile( vNewTilePos, pSandTile );
-                    } else if (pTileData.nHeight < 0.70) {
+                    } else if (pTileData.nHeight < 0.50) {
                         pGroundTileMap.SetTile( vNewTilePos, pGroundTile );
-                    } else if (pTileData.nHeight >= 0.70) {
+                    } else if (pTileData.nHeight >= 0.50) {
                         //Mountain [#TODO]
                         pGroundTileMap.SetTile( vNewTilePos, pGroundTile );
                     }
@@ -86,8 +87,8 @@ public class MapGenetator : MonoBehaviour {
                     pSandTileMap.SetTile( vNewTilePos, pSandTile );
                     pWaterTileMap.SetTile( vNewTilePos, pWaterTile );
 
-                    //if (pTileData.nHeight <= -0.17f) {
-                    //    pWaterShadowTileMap.SetTile( vNewTilePos, pWaterShadowTile );
+                    //if (pTileData.nHeight <= 0.40f) {
+                    //pWaterShadowTileMap.SetTile( vNewTilePos, pWaterShadowTile );
                     //}
                 }
 
@@ -147,11 +148,14 @@ public class MapGenetator : MonoBehaviour {
     }
 
     public Texture2D GenerateHeightMapTexture( ) {
-        Texture2D heightMap = new Texture2D( nWidth, nHeight );
+        Texture2D heightMap = new Texture2D( nMapSize, nMapSize );
         for (int i = 0 ; i < heightMap.width ; i++) {
             for (int j = 0 ; j < heightMap.width ; j++) {
                 float height = pTerrainMap[ i, j ].nHeight - this.flWaterSmooth;
                 Color colour = new Color( height, height, height, 1 );
+                if (height <= 0.15f)
+                    colour = Color.black;
+
                 heightMap.SetPixel( i, j, colour );
             }
         }
