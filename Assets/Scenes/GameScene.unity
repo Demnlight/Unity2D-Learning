@@ -281,8 +281,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26bc867c626f340c6bf5ff02555651d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pSandTile: {fileID: 11400000, guid: 9a1a49ad4a1ca49119b05ef99fb88ef6, type: 2}
+  pWaterTile: {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
+  pVisibleTileMap: {fileID: 1659805617}
+  pUnderWaterTileMap: {fileID: 1659805617}
+  pWaterMaterial: {fileID: 2100000, guid: 3376745178c2a45b7b67cd3a93406ffa, type: 2}
   ChunkSize: 16
-  Seed: yk96tib0i9
   PerlinScale: 48
   PerlinOctaves: 5
   persistence: 1
