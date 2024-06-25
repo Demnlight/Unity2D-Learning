@@ -11,15 +11,12 @@ public class MapGenetator : MonoBehaviour {
 
     public Material pWaterMaterial = null;
     public Material pSandMaterial = null;
-    public Material pGroundMaterial = null;
 
     public int nMapSize = 256;
-    public Tilemap pGroundTileMap = null;
     public Tilemap pSandTileMap = null;
     public Tilemap pWaterTileMap = null;
 
     public TileBase pSandTile = null;
-    public TileBase pGroundTile = null;
     public TileBase pWaterTile = null;
 
     private TileData_t[ , ] pTerrainMap;
@@ -32,7 +29,7 @@ public class MapGenetator : MonoBehaviour {
     private float flWaterSmooth = 0.145f;
 
     public void Start( ) {
-        if (pGroundTileMap == null || pWaterTileMap == null || pSandTileMap == null)
+        if (pWaterTileMap == null || pSandTileMap == null)
             return;
 
         this.GenerateMap( );
@@ -59,10 +56,6 @@ public class MapGenetator : MonoBehaviour {
             pSandMaterial.SetTexture( "_HeightMap", pTexture );
             pSandMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
             pSandMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
-
-            pGroundMaterial.SetTexture( "_HeightMap", pTexture );
-            pGroundMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
-            pGroundMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
         }
     }
 
@@ -82,14 +75,8 @@ public class MapGenetator : MonoBehaviour {
                 TileData_t pTileData = this.pTerrainMap[ i, j ];
 
                 if (pTileData.nHeight > 0.45f) {
-                    //ground, mountains, forest etc... [#TODO:Terrain]
-                    if (pTileData.nHeight < 0.47) {
-                        pSandTileMap.SetTile( vNewTilePos, pSandTile );
-                    } else {
-                        pGroundTileMap.SetTile( vNewTilePos, pGroundTile );
-                    }
+                    pSandTileMap.SetTile( vNewTilePos, pSandTile );
                 } else {
-                    //UnderGround (Sea, Caves) [#TODO:Terrain]
                     pSandTileMap.SetTile( vNewTilePos, pSandTile );
                     pWaterTileMap.SetTile( vNewTilePos, pWaterTile );
                 }
@@ -175,7 +162,6 @@ public class MapGenetator : MonoBehaviour {
         Debug.Log( pTile.nHeight );*/
     }
     public void ClearMap( ) {
-        pGroundTileMap.ClearAllTiles( );
         pWaterTileMap.ClearAllTiles( );
         pSandTileMap.ClearAllTiles( );
     }
