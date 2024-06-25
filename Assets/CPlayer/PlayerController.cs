@@ -23,12 +23,15 @@ public class PlayerController : MonoBehaviour {
     public static void AddPlayer( BasePlayer pNewPlayer ) {
         m_aPlayers.Add( pNewPlayer );
     }
+    public static BasePlayer GetLocalPlayer( ) {
+        return m_aPlayers[ 0 ];
+    }
 
     void ControllPlayerMovement( ) {
-        foreach ( BasePlayer pPlayer in m_aPlayers ) {
+        foreach (BasePlayer pPlayer in m_aPlayers) {
 
             PlayerMovement.CalculateMoveData( pPlayer );
-            
+
             pPlayer.pRigiBody.velocity = pPlayer.vVelocity;
         }
     }

@@ -1,197 +1,164 @@
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Tilemaps;
+using System.Collections.Generic;
+using System;
+using Unity.Mathematics;
+using UnityEditor;
 
-struct Chunk_t {
+public struct Chunk_t {
     public Vector2Int vPos;
-    public Vector2Int vSize;
-    public float[ , ] aHeights;
-    public Texture2D pHeightTexture;
+    public float[ , ] Heights;
+    public bool bVisible;
 }
 
 public class MapGenetator : MonoBehaviour {
+    public int ChunkSize = 16;
+    public string Seed = "";
+    public float PerlinScale = 48.0f;
+    public int PerlinOctaves = 5;
+    public float persistence = 1f;
+    public float lacunarity = 1f;
+    public float PerlinBaseAmplitude = 0.52f;
+    public Dictionary<Vector2Int, Chunk_t> aAllChunks = new Dictionary<Vector2Int, Chunk_t>( );
+    public List<Chunk_t> aVisibleChunks = new List<Chunk_t>( );
 
-    public Material pWaterMaterial = null;
-    public Material pSandMaterial = null;
+    public BasePlayer pPlayer = null;
 
-    public Tilemap pSandTileMap = null;
-    public Tilemap pWaterTileMap = null;
-
-    public TileBase pSandTile = null;
-    public TileBase pWaterTile = null;
-
-    private List<Chunk_t> aActiveChunks = new List<Chunk_t>( );
-    public int nChunkSize = 16;
-
-    public void Start( ) {
-        if (pWaterTileMap == null || pSandTileMap == null)
+    private Vector2Int vLastChunkPos = Vector2Int.zero;
+    private void Awake( ) {
+        if (!pPlayer)
             return;
+        aAllChunks.Clear( );
+        aVisibleChunks.Clear( );
+        List<Vector2Int> aNearestChunksPos = new List<Vector2Int> {
+            Vector2Int.up,
+            Vector2Int.right,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.one,
+            -Vector2Int.one,
+            new Vector2Int( 1, -1 ),
+            new Vector2Int( -1, 1 ),
+            Vector2Int.zero
+        };
 
-        for (int x = 0 ; x < 4 ; x++) {
-            for (int y = 0 ; y > -4 ; y++) {
-                this.aActiveChunks.Add( CreateChunk( x * nChunkSize, y * nChunkSize ) );
-            }
+        foreach (Vector2Int vChunkOffset in aNearestChunksPos) {
+            Vector2Int vRealChunkPos = vChunkOffset * ChunkSize;
+            GenerateChunk( vRealChunkPos.x, vRealChunkPos.y );
+            Chunk_t pPreviewChank = GetChunk( vRealChunkPos.x, vRealChunkPos.y );
+            pPreviewChank.bVisible = true;
+            this.aVisibleChunks.Add( pPreviewChank );
         }
-    }
-    private Chunk_t CreateChunk( int nStartX, int nStartY ) {
-        Chunk_t pNewChunk = new Chunk_t( );
-        pNewChunk.vPos = new Vector2Int( nStartX, nStartY );
-        pNewChunk.vSize = new Vector2Int( nChunkSize, nChunkSize );
-
-        pNewChunk.aHeights = new float[ nChunkSize, nChunkSize ];
-        for (int x = 0 ; x < pNewChunk.aHeights.GetLength( 0 ) ; x++) {
-            for (int y = 0 ; y < pNewChunk.aHeights.GetLength( 1 ) ; y++) {
-                pNewChunk.aHeights[ x, y ] = GetMapHeight( x, y, pNewChunk.vPos );
-            }
-        }
-        this.GenerateHeightMap( pNewChunk );
-        return pNewChunk;
-    }
-    private float GetMapHeight( int x, int y, Vector2Int vChunkPos ) {
-        float flHeight = 0.0f;
-
-        float flSampleX = ((float)x) / nChunkSize;
-        float flSampleY = ((float)y) / nChunkSize;
-        flHeight += Mathf.PerlinNoise( flSampleX, flSampleY );
-        return flHeight;
-    }
-    private void GenerateHeightMap( Chunk_t pChunk ) {
-        pChunk.pHeightTexture = new Texture2D( pChunk.vSize.x, pChunk.vSize.y );
-        for (int x = 0 ; x < pChunk.pHeightTexture.width ; x++) {
-            for (int y = 0 ; y < pChunk.pHeightTexture.height ; y++) {
-                float flHeight = pChunk.aHeights[ x, y ];
-                Color cPixel = new Color( flHeight, flHeight, flHeight, 1 );
-                pChunk.pHeightTexture.SetPixel( x, y, cPixel );
-            }
-        }
-        pChunk.pHeightTexture.Apply( );
-    }
-    /*public void CreateHeightMap( ) {
-        this.pTerrainMap = new TileData_t[ nMapSize, nMapSize ];
-
-        for (int i = 0 ; i < this.pTerrainMap.GetLength( 0 ) ; i++)
-            for (int j = 0 ; j < this.pTerrainMap.GetLength( 1 ) ; j++)
-                this.pTerrainMap[ i, j ] = GenerateTileData( i, j, seed, octaves, lacunarity, persistance, scale );
-
-        Texture2D pTexture = GenerateHeightMapTexture( );
-        if (pTexture != null) {
-            pTexture.Apply( );
-
-            Vector2 vMapPos = new Vector2( -nMapSize / 2, -nMapSize / 2 );
-
-            pWaterMaterial.SetTexture( "_HeightMap", pTexture );
-            pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
-            pWaterMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
-
-            pSandMaterial.SetTexture( "_HeightMap", pTexture );
-            pSandMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
-            pSandMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
-        }
-    }
-
-    public void GenerateMap( ) {
-        this.ClearMap( );
-        this.CreateHeightMap( );
-
-        float nMaxHeight = int.MinValue;
-        float nMinHeight = int.MaxValue;
-
-        float nMaxTe = int.MinValue;
-        float nMinTe = int.MaxValue;
-
-        for (int i = 0 ; i < pTerrainMap.GetLength( 0 ) ; i++) {
-            for (int j = 0 ; j < pTerrainMap.GetLength( 1 ) ; j++) {
-                Vector3Int vNewTilePos = new Vector3Int( i, j, 0 );
-                TileData_t pTileData = this.pTerrainMap[ i, j ];
-
-                if (pTileData.nHeight > 0.45f) {
-                    pSandTileMap.SetTile( vNewTilePos, pSandTile );
-                } else {
-                    pSandTileMap.SetTile( vNewTilePos, pSandTile );
-                    pWaterTileMap.SetTile( vNewTilePos, pWaterTile );
-                }
-
-                if (pTileData.nHeight > nMaxHeight)
-                    nMaxHeight = pTileData.nHeight;
-                if (pTileData.nHeight < nMinHeight)
-                    nMinHeight = pTileData.nHeight;
-
-                if (pTileData.nTemperature > nMaxTe)
-                    nMaxTe = pTileData.nTemperature;
-                if (pTileData.nTemperature < nMinTe)
-                    nMinTe = pTileData.nTemperature;
-            }
-        }
-
-        Debug.Log( nMaxHeight );
-        Debug.Log( nMinHeight );
-        Debug.Log( nMaxTe );
-        Debug.Log( nMinTe );
-    }
-
-    public TileData_t GenerateTileData( int x, int y, int seed, int octaves, float lacunarity, float persistance, float scale ) {
-        TileData_t pTileData = new TileData_t( );
-
-        System.Random rnd = new System.Random( seed );
-
-        Vector2[ ] octOffsets = new Vector2[ octaves ];
-
-        for (int i = 0 ; i < octaves ; i++) {
-            float offsetX = rnd.Next( -500, 500 );
-            float offsetY = rnd.Next( -500, 500 );
-            octOffsets[ i ] = new Vector2( offsetX, offsetY );
-        }
-
-        float flFrequency = 1;
-        float flHeight = 0;
-        float flAmplitude = 1;
-        float flTemperature = 0.0f;
-
-        for (int i = 0 ; i < octaves ; i++) {
-            float sampleX = x / (scale / flFrequency) + octOffsets[ i ].x + 0.1f;
-            float sampleY = y / (scale / flFrequency) + octOffsets[ i ].y + 0.1f;
-
-            float perlinValue = Mathf.PerlinNoise( sampleX, sampleY );
-            flHeight += perlinValue * flAmplitude;
-            flTemperature += perlinValue * flAmplitude;
-            flAmplitude *= persistance;
-            flFrequency *= lacunarity;
-        }
-
-        flHeight /= octaves;
-
-        pTileData.nHeight = flHeight;
-        pTileData.nTemperature = flTemperature;
-
-        return pTileData;
-    }
-
-    public Texture2D GenerateHeightMapTexture( ) {
-        Texture2D heightMap = new Texture2D( nMapSize, nMapSize );
-        for (int i = 0 ; i < heightMap.width ; i++) {
-            for (int j = 0 ; j < heightMap.width ; j++) {
-                float height = pTerrainMap[ i, j ].nHeight - this.flWaterSmooth;
-                Color colour = new Color( height, height, height, 1 );
-                heightMap.SetPixel( i, j, colour );
-            }
-        }
-        return heightMap;
     }
 
     private void Update( ) {
-        Vector3Int vMousePos = new Vector3Int(
-            (int)Input.mousePosition.x,
-            (int)Input.mousePosition.y,
-            (int)Input.mousePosition.z );
-        var mouseWorldPos = Camera.main.ScreenToWorldPoint( vMousePos );
+        Vector2Int chunkPos = new Vector2Int( 0, 0 );
 
-        TileData_t pTile = pTerrainMap[ nMapSize / 2 + (int)mouseWorldPos.x, nMapSize / 2 + (int)mouseWorldPos.y ];
-        Debug.Log( pTile.nHeight );
+        if (Camera.main.transform.position.x >= 0)
+            chunkPos.x = (int)((Camera.main.transform.position.x + ChunkSize) / ChunkSize);
+        else
+            chunkPos.x = (int)((Camera.main.transform.position.x - ChunkSize) / ChunkSize);
+
+        if (Camera.main.transform.position.y >= 0)
+            chunkPos.y = (int)((Camera.main.transform.position.y + ChunkSize) / ChunkSize);
+        else
+            chunkPos.y = (int)((Camera.main.transform.position.y - ChunkSize) / ChunkSize);
+
+        EnableChunks( chunkPos );
     }
-    public void ClearMap( ) {
-        pWaterTileMap.ClearAllTiles( );
-        pSandTileMap.ClearAllTiles( );
-    }*/
+
+    private void EnableChunks( Vector2Int vChunkPos ) {
+        Vector2Int vNewChunkPos = new Vector2Int( vChunkPos.x * ChunkSize, vChunkPos.y * ChunkSize );
+        if (!PositionIsNew( vNewChunkPos ))
+            return;
+
+        this.aVisibleChunks.Clear( );
+
+        List<Vector2Int> aNearestChunksPos = new List<Vector2Int> {
+            Vector2Int.up,
+            Vector2Int.right,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.one,
+            -Vector2Int.one,
+            new Vector2Int( 1, -1 ),
+            new Vector2Int( -1, 1 ),
+            Vector2Int.zero
+        };
+
+        foreach (Vector2Int vChunkOffset in aNearestChunksPos) {
+            Chunk_t offsetChunk = GetChunk(
+                vNewChunkPos.x + vChunkOffset.x * ChunkSize,
+                vNewChunkPos.y + vChunkOffset.y * ChunkSize );
+
+            offsetChunk.bVisible = true;
+            this.aVisibleChunks.Add( offsetChunk );
+        }
+        vLastChunkPos = vNewChunkPos;
+    }
+
+    public bool PositionIsNew( Vector2Int position ) {
+        return (vLastChunkPos != position);
+    }
+
+    public void GenerateChunk( int x, int y ) {
+        Vector2Int vChunkPos = new Vector2Int( x, y );
+        if (!this.aAllChunks.ContainsKey( vChunkPos )) {
+            Chunk_t pNewChunk = new Chunk_t( );
+            pNewChunk.vPos = vChunkPos;
+            pNewChunk.Heights = new float[ ChunkSize, ChunkSize ];
+
+            this.aAllChunks.Add( vChunkPos, pNewChunk );
+            GenerateChunkData( this.aAllChunks[ vChunkPos ] );
+        }
+    }
+    public Chunk_t GetChunk( int x, int y ) {
+        Vector2Int vChunkPos = new Vector2Int( x, y );
+        if (this.aAllChunks.ContainsKey( vChunkPos )) {
+            return this.aAllChunks[ vChunkPos ];
+        } else {
+            GenerateChunk( x, y );
+            return this.aAllChunks[ vChunkPos ];
+        }
+    }
+
+    private void GenerateChunkData( Chunk_t pChunk ) {
+        for (int x = 0 ; x < ChunkSize ; x++) {
+            for (int y = 0 ; y < ChunkSize ; y++) {
+                float amplitude = PerlinBaseAmplitude;
+                float freq = 1;
+                float noiseHeight = 0;
+
+                for (int i = 0 ; i < PerlinOctaves ; i++) {
+                    float px = (pChunk.vPos.x + x) / PerlinScale * freq;
+                    float py = (pChunk.vPos.y + y) / PerlinScale * freq;
+
+                    float PerlinValue = Mathf.PerlinNoise( px, py ) * 2 - 1;
+                    noiseHeight += PerlinValue * amplitude;
+
+                    amplitude *= persistence;
+                    freq *= lacunarity;
+                }
+                noiseHeight = Mathf.InverseLerp( -1f, 1f, noiseHeight );
+                pChunk.Heights[ x, y ] = noiseHeight;
+            }
+        }
+    }
+
+    private void OnDrawGizmos( ) {
+        if (!EditorApplication.isPlaying) {
+            Awake( );
+        }
+        foreach (Chunk_t c in this.aVisibleChunks) {
+            Vector3 ChunkPosition = new Vector3( c.vPos.x * ChunkSize, c.vPos.y * ChunkSize );
+            for (int x = 0 ; x < ChunkSize ; x++) {
+                for (int y = 0 ; y < ChunkSize ; y++) {
+                    Vector3 vCellPos = new Vector3( c.vPos.x + x + 0.5f, c.vPos.y + y + 0.5f, 0 );
+
+                    float flHeight = c.Heights[ x, y ];
+                    Gizmos.color = new Color( flHeight, flHeight, flHeight, 1 );
+                    Gizmos.DrawCube( vCellPos, Vector3.one );
+                }
+            }
+        }
+    }
 }
