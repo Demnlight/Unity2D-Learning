@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -9,17 +10,17 @@ public struct TileData_t {
 public class MapGenetator : MonoBehaviour {
 
     public Material pWaterMaterial = null;
+    public Material pSandMaterial = null;
+    public Material pGroundMaterial = null;
 
     public int nMapSize = 256;
     public Tilemap pGroundTileMap = null;
     public Tilemap pSandTileMap = null;
     public Tilemap pWaterTileMap = null;
-    public Tilemap pWaterShadowTileMap = null;
 
     public TileBase pSandTile = null;
     public TileBase pGroundTile = null;
     public TileBase pWaterTile = null;
-    public TileBase pWaterShadowTile = null;
 
     private TileData_t[ , ] pTerrainMap;
 
@@ -31,7 +32,7 @@ public class MapGenetator : MonoBehaviour {
     private float flWaterSmooth = 0.145f;
 
     public void Start( ) {
-        if (pGroundTileMap == null || pWaterShadowTileMap == null || pWaterTileMap == null)
+        if (pGroundTileMap == null || pWaterTileMap == null || pSandTileMap == null)
             return;
 
         this.GenerateMap( );
@@ -48,11 +49,20 @@ public class MapGenetator : MonoBehaviour {
         Texture2D pTexture = GenerateHeightMapTexture( );
         if (pTexture != null) {
             pTexture.Apply( );
-            pWaterMaterial.SetTexture( "_HeightMap", pTexture );
-            pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
 
             Vector2 vMapPos = new Vector2( -nMapSize / 2, -nMapSize / 2 );
+
+            pWaterMaterial.SetTexture( "_HeightMap", pTexture );
+            pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
             pWaterMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
+
+            pSandMaterial.SetTexture( "_HeightMap", pTexture );
+            pSandMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
+            pSandMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
+
+            pGroundMaterial.SetTexture( "_HeightMap", pTexture );
+            pGroundMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / nMapSize );
+            pGroundMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
         }
     }
 
@@ -75,21 +85,13 @@ public class MapGenetator : MonoBehaviour {
                     //ground, mountains, forest etc... [#TODO:Terrain]
                     if (pTileData.nHeight < 0.47) {
                         pSandTileMap.SetTile( vNewTilePos, pSandTile );
-                    } else if (pTileData.nHeight < 0.50) {
-                        pGroundTileMap.SetTile( vNewTilePos, pGroundTile );
-                    } else if (pTileData.nHeight >= 0.50) {
-                        //Mountain [#TODO]
+                    } else {
                         pGroundTileMap.SetTile( vNewTilePos, pGroundTile );
                     }
                 } else {
                     //UnderGround (Sea, Caves) [#TODO:Terrain]
-
                     pSandTileMap.SetTile( vNewTilePos, pSandTile );
                     pWaterTileMap.SetTile( vNewTilePos, pWaterTile );
-
-                    //if (pTileData.nHeight <= 0.40f) {
-                    //pWaterShadowTileMap.SetTile( vNewTilePos, pWaterShadowTile );
-                    //}
                 }
 
                 if (pTileData.nHeight > nMaxHeight)
@@ -162,10 +164,19 @@ public class MapGenetator : MonoBehaviour {
         return heightMap;
     }
 
+    private void Update( ) {
+        /*Vector3Int vMousePos = new Vector3Int(
+            (int)Input.mousePosition.x,
+            (int)Input.mousePosition.y,
+            (int)Input.mousePosition.z );
+        var mouseWorldPos = Camera.main.ScreenToWorldPoint( vMousePos );
+
+        TileData_t pTile = pTerrainMap[ nMapSize / 2 + (int)mouseWorldPos.x, nMapSize / 2 + (int)mouseWorldPos.y ];
+        Debug.Log( pTile.nHeight );*/
+    }
     public void ClearMap( ) {
         pGroundTileMap.ClearAllTiles( );
         pWaterTileMap.ClearAllTiles( );
         pSandTileMap.ClearAllTiles( );
-        pWaterShadowTileMap.ClearAllTiles( );
     }
 }
