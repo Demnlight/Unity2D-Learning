@@ -23,7 +23,7 @@ public class MapGenetator : MonoBehaviour {
 
     public BasePlayer pPlayer = null;
 
-    private Vector2Int vLastChunkPos = Vector2Int.zero;
+    private Vector2 vLastChunkPos = Vector2.zero;
     private void Awake( ) {
         if (!pPlayer)
             return;
@@ -51,23 +51,14 @@ public class MapGenetator : MonoBehaviour {
     }
 
     private void Update( ) {
-        Vector2Int chunkPos = new Vector2Int( 0, 0 );
-
-        if (Camera.main.transform.position.x >= 0)
-            chunkPos.x = (int)((Camera.main.transform.position.x + ChunkSize) / ChunkSize);
-        else
-            chunkPos.x = (int)((Camera.main.transform.position.x - ChunkSize) / ChunkSize);
-
-        if (Camera.main.transform.position.y >= 0)
-            chunkPos.y = (int)((Camera.main.transform.position.y + ChunkSize) / ChunkSize);
-        else
-            chunkPos.y = (int)((Camera.main.transform.position.y - ChunkSize) / ChunkSize);
-
+        Vector2 chunkPos = new Vector2( );
+        chunkPos.x = (Camera.main.transform.position.x - 8) / ChunkSize;
+        chunkPos.y = (Camera.main.transform.position.y - 8) / ChunkSize;
         EnableChunks( chunkPos );
     }
 
-    private void EnableChunks( Vector2Int vChunkPos ) {
-        Vector2Int vNewChunkPos = new Vector2Int( vChunkPos.x * ChunkSize, vChunkPos.y * ChunkSize );
+    private void EnableChunks( Vector2 vChunkPos ) {
+        Vector2 vNewChunkPos = new Vector2( vChunkPos.x * ChunkSize, vChunkPos.y * ChunkSize );
         if (!PositionIsNew( vNewChunkPos ))
             return;
 
@@ -87,8 +78,8 @@ public class MapGenetator : MonoBehaviour {
 
         foreach (Vector2Int vChunkOffset in aNearestChunksPos) {
             Chunk_t offsetChunk = GetChunk(
-                vNewChunkPos.x + vChunkOffset.x * ChunkSize,
-                vNewChunkPos.y + vChunkOffset.y * ChunkSize );
+                (int)vNewChunkPos.x + vChunkOffset.x * ChunkSize,
+                (int)vNewChunkPos.y + vChunkOffset.y * ChunkSize );
 
             offsetChunk.bVisible = true;
             this.aVisibleChunks.Add( offsetChunk );
@@ -96,7 +87,7 @@ public class MapGenetator : MonoBehaviour {
         vLastChunkPos = vNewChunkPos;
     }
 
-    public bool PositionIsNew( Vector2Int position ) {
+    public bool PositionIsNew( Vector2 position ) {
         return (vLastChunkPos != position);
     }
 
