@@ -12,7 +12,6 @@ public struct Chunk_t {
 
 public class MapGenetator : MonoBehaviour {
     public int ChunkSize = 16;
-    public string Seed = "";
     public float PerlinScale = 48.0f;
     public int PerlinOctaves = 5;
     public float persistence = 1f;
@@ -52,6 +51,9 @@ public class MapGenetator : MonoBehaviour {
 
     private void Update( ) {
         Vector2 chunkPos = new Vector2( );
+        //#TODO::Terrain [MapGenerator::Update]
+        //Исправить "шаг" на Chunksize, А не 1
+
         chunkPos.x = (Camera.main.transform.position.x - 8) / ChunkSize;
         chunkPos.y = (Camera.main.transform.position.y - 8) / ChunkSize;
         EnableChunks( chunkPos );
@@ -135,7 +137,7 @@ public class MapGenetator : MonoBehaviour {
         }
     }
 
-    private void OnDrawGizmos( ) {
+    /*private void OnDrawGizmos( ) {
         if (!EditorApplication.isPlaying) {
             Awake( );
         }
@@ -151,5 +153,5 @@ public class MapGenetator : MonoBehaviour {
                 }
             }
         }
-    }
+    }*/
 }
