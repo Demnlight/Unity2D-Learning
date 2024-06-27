@@ -7,10 +7,6 @@ public struct Chunk_t {
     public Vector2Int vPos;
     public float[ , ] Heights;
     public bool bVisible;
-    public Texture2D pHeightTexture;
-    public Tilemap pLayer1TileMap;
-    public Tilemap pLayer2TileMap;
-    public GameObject gameObject;
 }
 
 public class MapGenetator : MonoBehaviour {
@@ -30,16 +26,20 @@ public class MapGenetator : MonoBehaviour {
 
     private Vector2Int vLastChunkPos = Vector2Int.zero;
 
+    private Texture2D pHeightMapTexture = null;
+    public Tilemap pLayer1TileMap = null;
+    public Tilemap pLayer2TileMap = null;
+
     private List<Vector2Int> aNearestChunksPos = new List<Vector2Int> {
-            Vector2Int.up,
-            Vector2Int.right,
-            Vector2Int.down,
-            Vector2Int.left,
-            Vector2Int.one,
-            -Vector2Int.one,
-            new Vector2Int( 1, -1 ),
             new Vector2Int( -1, 1 ),
-            Vector2Int.zero
+            Vector2Int.up,
+            Vector2Int.one,
+            Vector2Int.left,
+            Vector2Int.zero,
+            Vector2Int.right,
+            -Vector2Int.one,
+            Vector2Int.down,
+            new Vector2Int( 1, -1 )
         };
 
     private void Start( ) {
@@ -81,9 +81,6 @@ public class MapGenetator : MonoBehaviour {
             return;
 
         Debug.Log( "Chunks Updating!" );
-        //foreach (Chunk_t chunk in this.aVisibleChunks) {
-        //    Destroy( chunk.gameObject );
-        //}
         this.aVisibleChunks.Clear( );
         foreach (Vector2Int vChunkOffset in aNearestChunksPos) {
             Chunk_t offsetChunk = GetChunk(
@@ -93,38 +90,28 @@ public class MapGenetator : MonoBehaviour {
             offsetChunk.bVisible = true;
             this.aVisibleChunks.Add( offsetChunk );
         }
+
+        this.pHeightMapTexture = this.GenerateHeightMapTexture( );
+        if (this.pHeightMapTexture != null) {
+            this.pHeightMapTexture.Apply( );
+
+            Vector2 vMapPos = new Vector2( this.aVisibleChunks[ 6 ].vPos.x, this.aVisibleChunks[ 6 ].vPos.y );
+
+            pWaterMaterial.SetTexture( "_HeightMap", this.pHeightMapTexture );
+            pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / (ChunkSize * 3) );
+            pWaterMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
+        }
+        this.pLayer1TileMap.ClearAllTiles( );
+        this.pLayer2TileMap.ClearAllTiles( );
+        
+        foreach (Chunk_t pChunk in this.aVisibleChunks)
+            this.FillTiles( pChunk );
+
         vLastChunkPos = vNewChunkPos;
     }
 
     public bool PositionIsNew( Vector2 position ) {
         return (vLastChunkPos != position);
-    }
-
-    private void CreateChunkObject( Chunk_t pChunk ) {
-        pChunk.gameObject = new GameObject( );
-        pChunk.gameObject.name = "Chunk{" + pChunk.vPos.x + "," + pChunk.vPos.y + "}";
-        pChunk.gameObject.transform.SetParent( gameObject.transform );
-
-        GameObject TileMapLayer1 = new GameObject( "TileMapLayer1" );
-        GameObject TileMapLayer2 = new GameObject( "TileMapLayer2" );
-
-        TileMapLayer1.transform.SetParent( pChunk.gameObject.transform );
-        TileMapLayer2.transform.SetParent( pChunk.gameObject.transform );
-
-        pChunk.pLayer1TileMap = TileMapLayer1.AddComponent<Tilemap>( );
-        {
-            TilemapRenderer pRenderer = TileMapLayer1.AddComponent<TilemapRenderer>( );
-            pRenderer.material = pWaterMaterial;
-
-            Vector2 vMapPos = pChunk.vPos;
-            pRenderer.material.SetTexture( "_HeightMap", pChunk.pHeightTexture );
-            pRenderer.material.SetFloat( "_CurrentWorldTextureScale", 1.0f / ChunkSize );
-            pRenderer.material.SetVector( "_CurrentWorldTexturePos", vMapPos );
-        }
-        pChunk.pLayer2TileMap = TileMapLayer2.AddComponent<Tilemap>( );
-        {
-            TileMapLayer2.AddComponent<TilemapRenderer>( );
-        }
     }
 
     public void GenerateChunk( int x, int y ) {
@@ -136,48 +123,19 @@ public class MapGenetator : MonoBehaviour {
             pNewChunk.Heights = new float[ ChunkSize, ChunkSize ];
             this.GenerateChunkData( pNewChunk );
 
-            pNewChunk.pHeightTexture = this.GenerateHeightMapTexture( pNewChunk );
-            if (pNewChunk.pHeightTexture) {
-                pNewChunk.pHeightTexture.Apply( );
-            }
+            //pNewChunk.pHeightTexture = this.GenerateHeightMapTexture( pNewChunk );
+            //if (pNewChunk.pHeightTexture) {
+            //    pNewChunk.pHeightTexture.Apply( );
+            //}
 
-            pNewChunk.gameObject = new GameObject( );
-            pNewChunk.gameObject.name = "Chunk{" + pNewChunk.vPos.x + "," + pNewChunk.vPos.y + "}";
-            pNewChunk.gameObject.transform.SetParent( gameObject.transform );
-
-            GameObject TileMapLayer1 = new GameObject( "TileMapLayer1" );
-            GameObject TileMapLayer2 = new GameObject( "TileMapLayer2" );
-
-            TileMapLayer1.transform.SetParent( pNewChunk.gameObject.transform );
-            TileMapLayer2.transform.SetParent( pNewChunk.gameObject.transform );
-
-            pNewChunk.pLayer1TileMap = TileMapLayer1.AddComponent<Tilemap>( );
-            {
-                TilemapRenderer pRenderer = TileMapLayer1.AddComponent<TilemapRenderer>( );
-                pRenderer.material = pWaterMaterial;
-
-                Vector2 vMapPos = pNewChunk.vPos;
-                pRenderer.material.SetTexture( "_HeightMap", pNewChunk.pHeightTexture );
-                pRenderer.material.SetFloat( "_CurrentWorldTextureScale", 1.0f / ChunkSize );
-                pRenderer.material.SetVector( "_CurrentWorldTexturePos", vMapPos );
-            }
-            pNewChunk.pLayer2TileMap = TileMapLayer2.AddComponent<Tilemap>( );
-            {
-                TilemapRenderer pRenderer = TileMapLayer2.AddComponent<TilemapRenderer>( );
-                TileMapLayer2.transform.position = new Vector3(0, 0, 0.1f);
-            }
-
-            this.FillTiles( pNewChunk );
+            //this.FillTiles( pNewChunk );
             this.aAllChunks.Add( vChunkPos, pNewChunk );
         }
     }
 
     void FillTiles( Chunk_t pChunk ) {
-        if (!pChunk.pLayer1TileMap || !pChunk.pLayer2TileMap)
+        if (!pLayer1TileMap || !pLayer2TileMap)
             return;
-
-        pChunk.pLayer1TileMap.ClearAllTiles( );
-        pChunk.pLayer2TileMap.ClearAllTiles( );
 
         TileBase[ ] pTilesLayer1 = new TileBase[ ChunkSize * ChunkSize ];
         TileBase[ ] pTilesLayer2 = new TileBase[ ChunkSize * ChunkSize ];
@@ -212,8 +170,8 @@ public class MapGenetator : MonoBehaviour {
             1
         );
 
-        pChunk.pLayer1TileMap.SetTilesBlock( bounds, pTilesLayer1 );
-        pChunk.pLayer2TileMap.SetTilesBlock( bounds, pTilesLayer2 );
+        pLayer1TileMap.SetTilesBlock( bounds, pTilesLayer1 );
+        pLayer2TileMap.SetTilesBlock( bounds, pTilesLayer2 );
     }
 
     public Chunk_t GetChunk( int x, int y ) {
@@ -249,13 +207,19 @@ public class MapGenetator : MonoBehaviour {
             }
         }
     }
-    public Texture2D GenerateHeightMapTexture( Chunk_t pChunk ) {
-        Texture2D heightMap = new Texture2D( ChunkSize, ChunkSize );
-        for (int i = 0 ; i < heightMap.width ; i++) {
-            for (int j = 0 ; j < heightMap.width ; j++) {
-                float height = pChunk.Heights[ i, j ];
-                Color colour = new Color( height, height, height, 1 );
-                heightMap.SetPixel( i, j, colour );
+    public Texture2D GenerateHeightMapTexture( ) {
+        Texture2D heightMap = new Texture2D( ChunkSize * 3, ChunkSize * 3 );
+        foreach (Chunk_t pChunk in this.aVisibleChunks) {
+            for (int x = 0 ; x < ChunkSize ; x++) {
+                for (int y = 0 ; y < ChunkSize ; y++) {
+                    float height = pChunk.Heights[ x, y ];
+                    Color colour = new Color( height, height, height, 1 );
+
+                    int nStartPosX = Math.Abs( pChunk.vPos.x - this.aVisibleChunks[ 0 ].vPos.x );
+                    int nStartPosY = Math.Abs( pChunk.vPos.y - this.aVisibleChunks[ 6 ].vPos.y );
+
+                    heightMap.SetPixel( nStartPosX + x, nStartPosY + y, colour );
+                }
             }
         }
         return heightMap;
