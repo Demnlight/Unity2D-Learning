@@ -36,7 +36,7 @@ public class BasePlayer : MonoBehaviour {
     public bool bIsSliding = false;
 
     // Start is called before the first frame update
-    void Start( ) {
+    void Awake( ) {
         this.pRigiBody = GetComponent<Rigidbody2D>( );
         this.pAnimator = GetComponent<Animator>( );
 
