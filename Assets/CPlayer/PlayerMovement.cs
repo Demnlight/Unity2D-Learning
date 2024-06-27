@@ -11,18 +11,16 @@ public class playerMovement : MonoBehaviour {
     private Rigidbody2D rigibody;
 
     private void Awake( ) {
-        rigibody = GetComponent<Rigidbody2D>();
+        rigibody = GetComponent<Rigidbody2D>( );
     }
     // Start is called before the first frame update
-    void Start()
-    {
-        
+    void Start( ) {
+
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update( ) {
+
     }
 
     private void FixedUpdate( ) {
@@ -37,8 +35,7 @@ public class playerMovement : MonoBehaviour {
             if (rigibody.velocity.magnitude > Max_Speed) {
                 rigibody.velocity = rigibody.velocity.normalized * Max_Speed;
             }
-        } 
-        else {
+        } else {
             rigibody.AddForce( rigibody.velocity * -Deccelaration_Player, ForceMode2D.Force );
         }
     }
