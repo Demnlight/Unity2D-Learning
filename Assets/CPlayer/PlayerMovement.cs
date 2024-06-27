@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class playerMovement : MonoBehaviour {
@@ -26,7 +29,17 @@ public class playerMovement : MonoBehaviour {
             if (rigibody.velocity.magnitude > Max_Speed) {
                 rigibody.velocity = rigibody.velocity.normalized * Max_Speed;
             }
+        Vector2 inputVector = new Vector2( flAxisRawHorizontal, flAxisRawVertical );
+
+        if (inputVector != Vector2.zero) {
+            rigibody.AddForce( inputVector * Accelaration_Player, ForceMode2D.Force );
+
+            if (rigibody.velocity.magnitude > Max_Speed) {
+                rigibody.velocity = rigibody.velocity.normalized * Max_Speed;
+            }
         } else {
+            rigibody.AddForce( rigibody.velocity * -Deccelaration_Player, ForceMode2D.Force );
+        }
             rigibody.AddForce( rigibody.velocity * -Deccelaration_Player, ForceMode2D.Force );
         }
     }
