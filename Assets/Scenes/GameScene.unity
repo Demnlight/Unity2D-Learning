@@ -284,13 +284,6 @@ MonoBehaviour:
   pSandTile: {fileID: 11400000, guid: a1401c1abf6174754a9a2dd69e0276f6, type: 2}
   pWaterTile: {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
   pWaterMaterial: {fileID: 2100000, guid: 3376745178c2a45b7b67cd3a93406ffa, type: 2}
-  ChunkSize: 16
-  PerlinScale: 48
-  PerlinOctaves: 5
-  persistence: 1
-  lacunarity: 1
-  PerlinBaseAmplitude: 0.52
-  pPlayer: {fileID: 1265153558}
   pLayer1TileMap: {fileID: 804981702}
   pLayer2TileMap: {fileID: 1299320822}
 --- !u!1 &433522022
@@ -749,15 +742,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4105362945620786469, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1265153558}
-    - targetCorrespondingSourceObject: {fileID: 4105362945620786469, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
-        type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1265153559}
     - targetCorrespondingSourceObject: {fileID: 4105362945620786469, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1265153562}
+    - targetCorrespondingSourceObject: {fileID: 4105362945620786469, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1265153564}
   m_SourcePrefab: {fileID: 100100000, guid: ebea5f8b8163f9a4ab9d9a1b45444e28, type: 3}
 --- !u!1 &619394800
 GameObject:
@@ -1151,38 +1144,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 522595138}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1265153558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 667967530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35728494ae2e2154db6e9aa33e8cbd91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pRigiBody: {fileID: 0}
-  pAnimator: {fileID: 0}
-  flMaxSpeed: 250
-  flSpeedMulti: 1
-  flSideMove: 0
-  flForwardMove: 0
-  flLastSideMove: 0
-  flLastForwardMove: 0
-  flTimeSinceStartMoving: 0
-  flAcceleration: 1
-  nPlayerState: 0
-  bChangedDirection: 0
-  flGlideTime: 0
-  bIsJumping: 0
-  flTimeInAir: 0
-  vVelocity: {x: 0, y: 0}
-  vLastVelocity: {x: 0, y: 0}
-  vMovingDirection: {x: 0, y: 0}
-  vLastMovingDirection: {x: 0, y: 0}
-  bIsSliding: 0
 --- !u!50 &1265153559
 Rigidbody2D:
   serializedVersion: 4
@@ -1255,6 +1216,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.9370729, y: 1.4090261}
   m_EdgeRadius: 0
+--- !u!114 &1265153564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667967530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c521b88f9b7a90429edef30f313fc94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Accelaration_Player: 50
+  Deccelaration_Player: 50
+  Max_Speed: 250
 --- !u!1 &1299320821
 GameObject:
   m_ObjectHideFlags: 0
