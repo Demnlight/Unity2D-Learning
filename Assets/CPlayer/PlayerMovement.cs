@@ -1,43 +1,33 @@
-using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class PlayerMovement : MonoBehaviour {
-    static public void CalculateMoveData( BasePlayer pPlayer ) {
+public class playerMovement : MonoBehaviour {
+    [SerializeField] private float Accelaration_Player = 50f;
+    [SerializeField] private float Deccelaration_Player = 50f;
+    [SerializeField] private float Max_Speed = 250f;
+
+    private Rigidbody2D rigibody;
+
+    private void Awake( ) {
+        rigibody = GetComponent<Rigidbody2D>( );
+    }
+
+    private void FixedUpdate( ) {
         float flAxisRawHorizontal = Input.GetAxisRaw( "Horizontal" );
         float flAxisRawVertical = Input.GetAxisRaw( "Vertical" );
 
-        pPlayer.flSideMove = flAxisRawHorizontal;
-        pPlayer.flForwardMove = flAxisRawVertical;
-        pPlayer.vMovingDirection = new Vector2( pPlayer.flSideMove, pPlayer.flForwardMove );
+        Vector2 inputVector = new Vector2( flAxisRawHorizontal, flAxisRawVertical );
 
-        if (pPlayer.vMovingDirection != pPlayer.vLastMovingDirection) {
-            pPlayer.bChangedDirection = true;
-            //if ( pPlayer.flAcceleration >= 10.0f )
-            //    pPlayer.flGlideTime = 1.0f;
-        } else
-            pPlayer.bChangedDirection = false;
+        if (inputVector != Vector2.zero) {
+            rigibody.AddForce( inputVector * Accelaration_Player, ForceMode2D.Force );
 
-        if (pPlayer.vMovingDirection != Vector2.zero && pPlayer.flGlideTime <= 0.0f) {
-            pPlayer.nPlayerState = BasePlayer.ePlayerState.MOVING;
-            pPlayer.flAcceleration = Mathf.Lerp( pPlayer.flAcceleration, pPlayer.flMaxSpeed, pPlayer.flTimeSinceStartMoving / 3 );
-            pPlayer.flTimeSinceStartMoving += 1.0f * Time.deltaTime;
+            if (rigibody.velocity.magnitude > Max_Speed) {
+                rigibody.velocity = rigibody.velocity.normalized * Max_Speed;
+            }
         } else {
-            pPlayer.nPlayerState = BasePlayer.ePlayerState.IDLE;
-            pPlayer.flTimeSinceStartMoving = 0.0f;
-            pPlayer.flAcceleration = 0;
+            rigibody.AddForce( rigibody.velocity * -Deccelaration_Player, ForceMode2D.Force );
         }
-
-        pPlayer.vVelocity = pPlayer.CalcVelocity( );
-
-        pPlayer.pAnimator.SetBool( "IsRunning", pPlayer.vVelocity != Vector2.zero );
-        pPlayer.pAnimator.SetFloat( "flRunningAnimationSpeed", pPlayer.flAcceleration / pPlayer.flMaxSpeed );
-
-        if (pPlayer.vMovingDirection.x != 0.0f )
-            pPlayer.transform.localScale = new Vector3( pPlayer.vMovingDirection.x, 1, 1 );
-
-        pPlayer.vLastMovingDirection = pPlayer.vMovingDirection;
-        pPlayer.vLastVelocity = pPlayer.vVelocity;
-        pPlayer.flLastForwardMove = pPlayer.flForwardMove;
-        pPlayer.flLastSideMove = pPlayer.flSideMove;
     }
 }

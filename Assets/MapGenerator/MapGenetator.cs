@@ -15,22 +15,22 @@ public class MapGenetator : MonoBehaviour {
     public static int ChunkSize = 16;
     public Dictionary<Vector2Int, Chunk_t> aAllChunks = new Dictionary<Vector2Int, Chunk_t>( );
     public List<Chunk_t> aVisibleChunks = new List<Chunk_t>( );
-    public BasePlayer pPlayer = null;
     private Texture2D pHeightMapTexture = null;
     public Tilemap pLayer1TileMap = null;
     public Tilemap pLayer2TileMap = null;
 
+    Transform pWizardTransform = null;
+
     private void Start( ) {
-        if (!pPlayer)
-            return;
+        this.pWizardTransform = GameObject.Find("Wizard").transform;
 
         aAllChunks.Clear( );
         aVisibleChunks.Clear( );
     }
     private void Update( ) {
         Vector2Int chunkPos = new Vector2Int( );
-        chunkPos.x = MapGeneratorHelper.Rounded( pPlayer.transform.position.x / ChunkSize );
-        chunkPos.y = MapGeneratorHelper.Rounded( pPlayer.transform.position.y / ChunkSize );
+        chunkPos.x = MapGeneratorHelper.Rounded( this.pWizardTransform.transform.position.x / ChunkSize );
+        chunkPos.y = MapGeneratorHelper.Rounded( this.pWizardTransform.transform.position.y / ChunkSize );
         EnableChunks( chunkPos );
     }
 
