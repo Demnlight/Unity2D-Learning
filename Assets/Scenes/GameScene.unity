@@ -1230,7 +1230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Accelaration_Player: 50
   Deccelaration_Player: 50
-  Max_Speed: 250
+  Max_Speed: 100
 --- !u!1 &1299320821
 GameObject:
   m_ObjectHideFlags: 0

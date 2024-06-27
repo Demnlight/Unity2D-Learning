@@ -5,10 +5,11 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class playerMovement : MonoBehaviour {
     [SerializeField] private float Accelaration_Player = 5f;
-    [SerializeField] private float Deccelaration_Player = 5f;
-    [SerializeField] private float Max_Speed = 20f;
+    [SerializeField] private float Deccelaration_Player = 10f;
+    [SerializeField] private float Max_Speed = 5f;
 
     private Rigidbody2D rigibody;
+    private Vector2 Last_Direction;
 
     private void Awake( ) {
         rigibody = GetComponent<Rigidbody2D>( );
@@ -29,14 +30,31 @@ public class playerMovement : MonoBehaviour {
 
         Vector2 inputVector = new Vector2( flAxisRawHorizontal, flAxisRawVertical );
 
-        if (inputVector != Vector2.zero) {
-            rigibody.AddForce( inputVector * Accelaration_Player, ForceMode2D.Force );
+        float t = Time.deltaTime; // время с момента прошедшего кадра
 
+        // провекра на смену направления
+        if (inputVector != Vector2.zero && inputVector != Last_Direction) {
+            rigibody.velocity = Vector2.zero; // обнуление скорости при смене направления
+            Last_Direction = inputVector; // обнова последнего направления
+        }
+
+        if (inputVector != Vector2.zero) {
+            // ускорение с учетом времени кадра 
+            rigibody.velocity += inputVector * Accelaration_Player * t;
+
+            // ограничение макс скорости
             if (rigibody.velocity.magnitude > Max_Speed) {
                 rigibody.velocity = rigibody.velocity.normalized * Max_Speed;
             }
         } else {
-            rigibody.AddForce( rigibody.velocity * -Deccelaration_Player, ForceMode2D.Force );
+            // замедление с учетом времени кадра
+            rigibody.velocity -= rigibody.velocity.normalized * Deccelaration_Player * t;
+
+      
+            if (rigibody.velocity.magnitude < 0.1f) { // скорость близится к 0, если остановка
+                rigibody.velocity = Vector2.zero;
+            }
         }
     }
 }
+
