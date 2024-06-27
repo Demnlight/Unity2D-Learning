@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine.Tilemaps;
 
 public struct Chunk_t {
