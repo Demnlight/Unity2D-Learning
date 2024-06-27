@@ -290,7 +290,7 @@ MonoBehaviour:
   persistence: 1
   lacunarity: 1
   PerlinBaseAmplitude: 0.52
-  pPlayer: {fileID: 0}
+  pPlayer: {fileID: 1265153558}
   pLayer1TileMap: {fileID: 804981702}
   pLayer2TileMap: {fileID: 1299320822}
 --- !u!1 &433522022
@@ -529,7 +529,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: 8, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1369,7 +1369,7 @@ Transform:
   m_GameObject: {fileID: 1299320821}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

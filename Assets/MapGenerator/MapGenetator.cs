@@ -103,7 +103,7 @@ public class MapGenetator : MonoBehaviour {
         }
         this.pLayer1TileMap.ClearAllTiles( );
         this.pLayer2TileMap.ClearAllTiles( );
-        
+
         foreach (Chunk_t pChunk in this.aVisibleChunks)
             this.FillTiles( pChunk );
 
@@ -148,17 +148,12 @@ public class MapGenetator : MonoBehaviour {
             }
 
             float flHeight = pChunk.Heights[ LocalX, LocalY ];
-            if (flHeight > 0.65f) {
+            if (flHeight > 0.9f) {
                 pTilesLayer2[ i ] = pSandTile;
             } else {
                 pTilesLayer1[ i ] = pWaterTile;
                 pTilesLayer2[ i ] = pSandTile;
             }
-
-            /*Vector3Int vLocalPos = new Vector3Int( pChunk.vPos.x + LocalX, pChunk.vPos.y + LocalY, 0 );
-            Color cPixel = new Color( flHeight, flHeight, flHeight, 1 );
-            this.pLayer2TileMap.SetTileFlags( vLocalPos, TileFlags.None );
-            this.pLayer2TileMap.SetColor( vLocalPos, cPixel );*/
             LocalY++;
         }
         BoundsInt bounds = new BoundsInt(
