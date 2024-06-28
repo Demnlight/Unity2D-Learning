@@ -1,20 +1,25 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System;
 using UnityEngine.Tilemaps;
-using Unity.Mathematics;
-
+/*
+TODO:
+1) clear this.allchunks if distance > 3 * chunksize.
+2) Do not rebuild chunks if it was wisible before.
+*/
 public struct Chunk_t {
     public Vector2Int vPos;
     public float[ , ] Heights;
     public bool bVisible;
 }
-public class MapGenetator : MonoBehaviour {
+public class MapGenerator : MonoBehaviour {
     public TileBase pSandTile = null;
     public TileBase pWaterTile = null;
     public TileBase pWaterShadowTile = null;
     public Material pWaterMaterial = null;
     public static int ChunkSize = 16;
+    public static int ChunkCount = 2;
+    public static int nChunksCountInLine = ChunkCount * 2 + 1;
+    public static int nChunksSizeInLine = nChunksCountInLine * ChunkSize;
     public Dictionary<Vector2Int, Chunk_t> aAllChunks = new Dictionary<Vector2Int, Chunk_t>( );
     public List<Chunk_t> aVisibleChunks = new List<Chunk_t>( );
     private Texture2D pHeightMapTexture = null;
@@ -41,6 +46,14 @@ public class MapGenetator : MonoBehaviour {
         Vector2Int vNewChunkPos = new Vector2Int( vChunkPos.x * ChunkSize, vChunkPos.y * ChunkSize );
         if (!MapGeneratorHelper.PositionIsNew( vNewChunkPos ))
             return;
+
+        MapGeneratorHelper.aNearestChunksPos.Clear( );
+
+        for (int x = -ChunkCount; x <= ChunkCount; x++) {
+            for (int y = -ChunkCount; y <= ChunkCount; y++) {
+                MapGeneratorHelper.aNearestChunksPos.Add( new Vector2Int( x, y ) );
+            }
+        }
 
         this.aVisibleChunks.Clear( );
         foreach (Vector2Int vChunkOffset in MapGeneratorHelper.aNearestChunksPos) {
@@ -87,8 +100,8 @@ public class MapGenetator : MonoBehaviour {
             TileBase[ ] pTilesLayer0 = new TileBase[ ChunkSize * ChunkSize ];
             TileBase[ ] pTilesLayer1 = new TileBase[ ChunkSize * ChunkSize ];
             TileBase[ ] pTilesLayer2 = new TileBase[ ChunkSize * ChunkSize ];
-            for (int y = 0 ; y < ChunkSize ; y++) {
-                for (int x = 0 ; x < ChunkSize ; x++) {
+            for (int y = 0; y < ChunkSize; y++) {
+                for (int x = 0; x < ChunkSize; x++) {
 
                     float flHeight = pChunk.Heights[ x, y ];
                     if (flHeight > 0.5f) {
@@ -134,8 +147,8 @@ public class MapGenetator : MonoBehaviour {
     private void OnDrawGizmos( ) {
         foreach (Chunk_t c in this.aVisibleChunks) {
             Vector3 ChunkPosition = new Vector3( c.vPos.x * ChunkSize, c.vPos.y * ChunkSize );
-            for (int x = 0 ; x < ChunkSize ; x++) {
-                for (int y = 0 ; y < ChunkSize ; y++) {
+            for (int x = 0; x < ChunkSize; x++) {
+                for (int y = 0; y < ChunkSize; y++) {
                     Vector3 vCellPos = new Vector3( c.vPos.x + x + 0.5f, c.vPos.y + y + 0.5f, 0 );
 
                     float flHeight = c.Heights[ x, y ];
@@ -147,7 +160,7 @@ public class MapGenetator : MonoBehaviour {
     }
 
     private void OnGUI( ) {
-        return;
+        /*return;
         Vector3 vMousePos = Input.mousePosition;
         Vector3 vWorldPosition = Camera.main.ScreenToWorldPoint( vMousePos );
 
@@ -168,6 +181,6 @@ public class MapGenetator : MonoBehaviour {
             Vector3 vWorldScreenPosition = Camera.main.WorldToScreenPoint( vWorldChunkPos );
 
             GUI.Label( new Rect( vWorldScreenPosition.x - 80, vWorldScreenPosition.y - 45, 160, 30 ), szHeight );
-        }
+        }*/
     }
 }
