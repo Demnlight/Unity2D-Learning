@@ -67,7 +67,7 @@
     <Compile Include="Assets/MapGenerator/MapGeneratorHelper.cs" />
     <Compile Include="Assets/BaseEntity/Camera/FovManager.cs" />
     <Compile Include="Assets/BaseEntity/Camera/FollowPlayer.cs" />
-    <Compile Include="Assets/MapGenerator/MapGenetator.cs" />
+    <Compile Include="Assets/MapGenerator/MapGenerator.cs" />
     <Compile Include="Assets/CPlayer/PlayerMovement.cs" />
   </ItemGroup>
   <ItemGroup>
