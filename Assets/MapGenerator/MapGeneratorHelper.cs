@@ -40,13 +40,13 @@ public class MapGeneratorHelper : MonoBehaviour {
     }
 
     public static void FillChunkHeights( Chunk_t pChunk ) {
-        for (int x = 0 ; x < MapGenetator.ChunkSize ; x++) {
-            for (int y = 0 ; y < MapGenetator.ChunkSize ; y++) {
+        for (int x = 0; x < MapGenerator.ChunkSize; x++) {
+            for (int y = 0; y < MapGenerator.ChunkSize; y++) {
                 float amplitude = PerlinBaseAmplitude;
                 float freq = 1;
                 float noiseHeight = 0;
 
-                for (int i = 0 ; i < PerlinOctaves ; i++) {
+                for (int i = 0; i < PerlinOctaves; i++) {
                     float px = (pChunk.vPos.x + x) / PerlinScale * freq;
                     float py = (pChunk.vPos.y + y) / PerlinScale * freq;
 
@@ -62,15 +62,15 @@ public class MapGeneratorHelper : MonoBehaviour {
         }
     }
     public static Texture2D GenerateHeightMapTexture( List<Chunk_t> aVisibleChunks ) {
-        Texture2D heightMap = new Texture2D( MapGenetator.ChunkSize * 3, MapGenetator.ChunkSize * 3 );
+        Texture2D heightMap = new Texture2D( MapGenerator.nChunksSizeInLine, MapGenerator.nChunksSizeInLine );
         foreach (Chunk_t pChunk in aVisibleChunks) {
-            for (int x = 0 ; x < MapGenetator.ChunkSize ; x++) {
-                for (int y = 0 ; y < MapGenetator.ChunkSize ; y++) {
+            for (int x = 0; x < MapGenerator.ChunkSize; x++) {
+                for (int y = 0; y < MapGenerator.ChunkSize; y++) {
                     float height = pChunk.Heights[ x, y ];
                     Color colour = new Color( height, height, height, 1 );
 
                     int nStartPosX = Math.Abs( pChunk.vPos.x - aVisibleChunks[ 0 ].vPos.x );
-                    int nStartPosY = Math.Abs( pChunk.vPos.y - aVisibleChunks[ 6 ].vPos.y );
+                    int nStartPosY = Math.Abs( pChunk.vPos.y - aVisibleChunks[ 0 ].vPos.y );
 
                     heightMap.SetPixel( nStartPosX + x, nStartPosY + y, colour );
                 }
@@ -79,10 +79,10 @@ public class MapGeneratorHelper : MonoBehaviour {
         return heightMap;
     }
     public static void SetupMaterialData( Material pWaterMaterial, List<Chunk_t> aVisibleChunks, Texture2D pHeightMapTexture ) {
-        Vector2 vMapPos = new Vector2( aVisibleChunks[ 6 ].vPos.x, aVisibleChunks[ 6 ].vPos.y );
+        Vector2 vMapPos = new Vector2( aVisibleChunks[ 0 ].vPos.x, aVisibleChunks[ 0 ].vPos.y );
 
         pWaterMaterial.SetTexture( "_HeightMap", pHeightMapTexture );
-        pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / (MapGenetator.ChunkSize * 3) );
+        pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / MapGenerator.nChunksSizeInLine );
         pWaterMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
     }
 }
