@@ -1228,9 +1228,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c521b88f9b7a90429edef30f313fc94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Accelaration_Player: 50
-  Deccelaration_Player: 50
-  Max_Speed: 100
+  Accelaration_Player: 5
+  Deccelaration_Player: 10
+  Max_Speed: 5
 --- !u!1 &1299320821
 GameObject:
   m_ObjectHideFlags: 0

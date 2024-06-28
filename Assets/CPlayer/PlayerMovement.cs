@@ -8,6 +8,7 @@ public class playerMovement : MonoBehaviour {
     [SerializeField] private float Deccelaration_Player = 10f;
     [SerializeField] private float Max_Speed = 5f;
 
+
     private Rigidbody2D rigibody;
     private Vector2 Last_Direction;
 
@@ -45,16 +46,50 @@ public class playerMovement : MonoBehaviour {
             // ограничение макс скорости
             if (rigibody.velocity.magnitude > Max_Speed) {
                 rigibody.velocity = rigibody.velocity.normalized * Max_Speed;
+
             }
-        } else {
+        } 
+        else 
+        {
             // замедление с учетом времени кадра
             rigibody.velocity -= rigibody.velocity.normalized * Deccelaration_Player * t;
 
-      
             if (rigibody.velocity.magnitude < 0.1f) { // скорость близится к 0, если остановка
                 rigibody.velocity = Vector2.zero;
             }
         }
+        if (flAxisRawHorizontal > 0) 
+        {
+            transform.localScale = new Vector3( 1f, 1f, 1f ); // Поворот вправо
+        } 
+        else if (flAxisRawHorizontal < 0) 
+        {
+            transform.localScale = new Vector3( -1f, 1f, 1f ); // Поворот влево
+        } 
+        else if (flAxisRawVertical > 0) 
+        {
+            if (Last_Direction.x < 0) {
+                transform.localScale = new Vector3( 1f, 1f, 1f ); // Сохранение направления влево при движении вверх
+
+            }
+            //transform.localScale = new Vector3( 1f, 1f, 1f ); // Поворот вверх
+        }
+        else if (flAxisRawVertical < 0) 
+        {
+            if (Last_Direction.x < 0) 
+            {
+                transform.localScale = new Vector3( 1f, 1f, 1f ); // Сохранение направления влево при движении вниз
+            }
+        }
+            //} else Здесь были изменения для резкой остановки, но сейчас они не нужны
+            //{
+            //    rigibody.velocity -= rigibody.velocity.normalized * Deccelaration_Player * t;
+
+            //    if (rigibody.velocity.magnitude < 0.1f) 
+            //    {
+            //        rigibody.velocity = Vector2.zero;
+            //    }
+        
     }
 }
 
