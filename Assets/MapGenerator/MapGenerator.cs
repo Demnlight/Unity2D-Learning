@@ -27,6 +27,7 @@ public class MapGenerator : MonoBehaviour {
 
     public const int nChunkSize = 16;
     public const int nRenderDistance = 1;
+    public const int nRenderDistanceSize = nRenderDistance * nChunkSize;
     public const int nChunksCountInLine = nRenderDistance * 2 + 1;
     public const int nChunksSizeInLine = nChunksCountInLine * nChunkSize;
     private Dictionary<Vector2Int, Chunk_t> aAllChunks = new Dictionary<Vector2Int, Chunk_t>( );
@@ -61,8 +62,6 @@ public class MapGenerator : MonoBehaviour {
         pHelper.FillNearestChunksUsingRenderDistance( nRenderDistance );
 
         List<Chunk_t> vAddedChunks = new List<Chunk_t>( );
-        List<Vector2Int> vToRemoveCoords = new List<Vector2Int>( );
-
         foreach (Vector2Int vChunkOffset in pHelper.aNearestChunksPos) {
             Vector2Int nChunkStartPos = new Vector2Int(
                 vNewChunkPos.x + vChunkOffset.x * nChunkSize,
@@ -76,8 +75,6 @@ public class MapGenerator : MonoBehaviour {
             }
         }
 
-        vToRemoveCoords = this.ClearFarChunks( this.aVisibleChunks );
-
         vStartChunk = pHelper.FindStartChunk( this.aVisibleChunks );
 
         this.pHeightMapTexture = pHelper.GenerateHeightMapTexture( this.aVisibleChunks, this.vStartChunk );
@@ -87,7 +84,10 @@ public class MapGenerator : MonoBehaviour {
             pHelper.SetupMaterialData( pWaterMaterial, this.aVisibleChunks, this.pHeightMapTexture, this.vStartChunk );
         }
 
-        this.ClearTileMaps( vToRemoveCoords );
+        this.ClearFarChunks( this.aAllChunks, nRenderDistanceSize * 2 );
+
+        List<Vector2Int> vRemovedChunksCoord = this.ClearFarChunks( this.aVisibleChunks, nRenderDistanceSize );
+        this.ClearTileMaps( vRemovedChunksCoord );
         this.FillTiles( vAddedChunks );
 
         pHelper.vLastChunkPos = vNewChunkPos;
@@ -202,8 +202,8 @@ public class MapGenerator : MonoBehaviour {
         }*/
     }
 
-    private void ClearTileMaps( List<Vector2Int> vClearedChunksPos ) {
-        foreach (var v in vClearedChunksPos) {
+    private void ClearTileMaps( List<Vector2Int> vRemovedChunksCoord ) {
+        foreach (var v in vRemovedChunksCoord) {
             BoundsInt bounds = new BoundsInt(
                 v.x, v.y, 0,
                 nChunkSize, nChunkSize, 1
@@ -214,18 +214,18 @@ public class MapGenerator : MonoBehaviour {
         }
     }
 
-    private bool IsChunkFar( Vector2Int vChunkPos ) {
+    private bool IsChunkFar( Vector2Int vChunkPos, int nMaxDistance ) {
         int nXDistance = Math.Abs( vChunkPos.x - this.vPlayerChunkStart.x );
         int nYDistance = Math.Abs( vChunkPos.y - this.vPlayerChunkStart.y );
-        bool bXOutOfDistance = nXDistance > nChunkSize * nRenderDistance;
-        bool bYOutOfDistance = nYDistance > nChunkSize * nRenderDistance;
+        bool bXOutOfDistance = nXDistance > nMaxDistance;
+        bool bYOutOfDistance = nYDistance > nMaxDistance;
 
         return bXOutOfDistance || bYOutOfDistance;
     }
-    private List<Vector2Int> ClearFarChunks( Dictionary<Vector2Int, Chunk_t> pChunks ) {
+    private List<Vector2Int> ClearFarChunks( Dictionary<Vector2Int, Chunk_t> pChunks, int nMaxDistance ) {
         List<Vector2Int> vToRemoveCoords = new List<Vector2Int>( );
         foreach (var pChunk in pChunks) {
-            if (this.IsChunkFar( pChunk.Value.vPos ))
+            if (this.IsChunkFar( pChunk.Value.vPos, nMaxDistance ))
                 vToRemoveCoords.Add( pChunk.Value.vPos );
         }
 
