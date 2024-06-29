@@ -138,14 +138,15 @@ public class MapGenerator : MonoBehaviour {
                     }
                 }
 
+                pTiles[ nMapLayer ] = pHelper.GetTiles( pChunk,
+                    this.pMinTilesHeights[nMapLayer], this.pMaxTilesHeights[nMapLayer],
+                    this.pTiles[ nMapLayer ]
+                );
+
                 BoundsInt bounds = new BoundsInt(
                     pChunk.vPos.x, pChunk.vPos.y, 0,
                     nChunkSize, nChunkSize, 1
                 );
-
-                //pLayer0TileMap.SetTilesBlock( bounds, pTilesLayer0 );
-                //pLayer1TileMap.SetTilesBlock( bounds, pTilesLayer1 );
-                //pLayer2TileMap.SetTilesBlock( bounds, pTilesLayer2 );
 
                 this.pMaps[ nMapLayer ].SetTilesBlock( bounds, pTiles[ nMapLayer ] );
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class MapGeneratorHelper {
 
@@ -119,5 +120,22 @@ public class MapGeneratorHelper {
         }
         vReturn = new Vector2Int( nMinX, nMinY );
         return vReturn;
+    }
+
+    public TileBase[ ] GetTiles( Chunk_t pChunk, float flMinTileHeight, float flMaxTileHeight, TileBase pTile ) {
+        TileBase[ ] pTiles = new TileBase[ MapGenerator.nChunkSize * MapGenerator.nChunkSize ];
+
+        int i = 0;
+        for (int y = 0; y < MapGenerator.nChunkSize; y++) {
+            for (int x = 0; x < MapGenerator.nChunkSize; x++) {
+
+                float flHeight = pChunk.Heights[ x, y ];
+                if (flHeight >= flMinTileHeight && flHeight < flMaxTileHeight)
+                    pTiles[ i ] = pTile;
+                i++;
+            }
+        }
+
+        return pTiles;
     }
 }
