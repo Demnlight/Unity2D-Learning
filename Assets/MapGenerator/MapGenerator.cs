@@ -38,7 +38,7 @@ public class MapGenerator : MonoBehaviour {
 
     private MapGeneratorHelper pHelper = new MapGeneratorHelper( );
 
-    private void Start( ) {
+    public void Init( ) {
         this.pWizardTransform = GameObject.Find( "Wizard" ).transform;
 
         aAllChunks.Clear( );

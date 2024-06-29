@@ -735,6 +735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovement: {fileID: 1265153563}
   fovManager: {fileID: 519420035}
+  mapGenerator: {fileID: 304237356}
 --- !u!4 &611928458
 Transform:
   m_ObjectHideFlags: 0
