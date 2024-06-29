@@ -9,7 +9,7 @@ public class playerMovement : MonoBehaviour {
     private PlayerInputActions inputActions;
     private Vector2 vMovingDirection;
 
-    void Awake( ) {
+    public void Init( ) {
         rb = GetComponent<Rigidbody2D>( );
 
         inputActions = new PlayerInputActions( );
