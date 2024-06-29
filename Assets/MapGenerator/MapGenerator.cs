@@ -12,12 +12,12 @@ public struct Chunk_t {
     public bool bVisible;
 }
 public class MapGenerator : MonoBehaviour {
-    [SerializeField] private float flPerlinScale = 48.0f;
-    [SerializeField] private int flPerlinOctaves = 5;
-    [SerializeField] private float flPersistence = 1f;
-    [SerializeField] private float flLacunarity = 1f;
-    [SerializeField] private float flPerlinBaseAmplitude = 0.50f;
-    [SerializeField] private int nSeed = 16275;
+    [SerializeField, Range( 0, 9999.0f)] private float flPerlinScale = 48.0f;
+    [SerializeField, Range( 0, 9999)] private int flPerlinOctaves = 5;
+    [SerializeField, Range( 0, 10)] private float flPersistence = 1f;
+    [SerializeField, Range( 0, 10)] private float flLacunarity = 1f;
+    [SerializeField, Range( 0, 10)] private float flPerlinBaseAmplitude = 0.50f;
+    [SerializeField, Range( 0, int.MaxValue)] private int nSeed = 16275;
 
     [SerializeField] private TileBase[ ] pTiles = null;
     [SerializeField] private Material pWaterMaterial = null;

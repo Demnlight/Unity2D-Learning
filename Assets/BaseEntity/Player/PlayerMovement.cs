@@ -3,8 +3,8 @@ using UnityEngine.InputSystem;
 
 [RequireComponent( typeof( Rigidbody2D ) )]
 public class playerMovement : MonoBehaviour {
-    [SerializeField] private float maxSpeed = 250f;
-    [SerializeField] private float friction = 0.9f;
+    [SerializeField, Range( 0, 9999)] private float maxSpeed = 250f;
+    [SerializeField, Range( 0, 0.99f)] private float friction = 0.9f;
 
     private Rigidbody2D rb;
     private PlayerInputActions inputActions;
