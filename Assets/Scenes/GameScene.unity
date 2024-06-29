@@ -219,7 +219,7 @@ MonoBehaviour:
   flPersistence: 1
   flLacunarity: 1
   flPerlinBaseAmplitude: 0.5
-  nSeed: 157289
+  nSeed: 0
   pTiles:
   - {fileID: 11400000, guid: 148b01989c67c48bba21e7fabe42aefb, type: 2}
   - {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
@@ -237,7 +237,7 @@ MonoBehaviour:
   - 0.51
   - 0.51
   - 1
-  vStartChunk: {x: 0, y: 0}
+  pWizardTransform: {fileID: 1265153555}
 --- !u!1 &433522022
 GameObject:
   m_ObjectHideFlags: 0

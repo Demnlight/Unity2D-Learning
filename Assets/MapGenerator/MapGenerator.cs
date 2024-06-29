@@ -12,18 +12,20 @@ public struct Chunk_t {
     public bool bVisible;
 }
 public class MapGenerator : MonoBehaviour {
-    [SerializeField, Range( 0, 9999.0f)] private float flPerlinScale = 48.0f;
-    [SerializeField, Range( 0, 9999)] private int flPerlinOctaves = 5;
-    [SerializeField, Range( 0, 10)] private float flPersistence = 1f;
-    [SerializeField, Range( 0, 10)] private float flLacunarity = 1f;
-    [SerializeField, Range( 0, 10)] private float flPerlinBaseAmplitude = 0.50f;
-    [SerializeField, Range( 0, int.MaxValue)] private int nSeed = 16275;
+    [SerializeField, Range( 0, 9999.0f )] private float flPerlinScale = 48.0f;
+    [SerializeField, Range( 0, 9999 )] private int flPerlinOctaves = 5;
+    [SerializeField, Range( 0, 10 )] private float flPersistence = 1f;
+    [SerializeField, Range( 0, 10 )] private float flLacunarity = 1f;
+    [SerializeField, Range( 0, 10 )] private float flPerlinBaseAmplitude = 0.50f;
+    [SerializeField, Range( 0, 320000 )] private int nSeed = 16275;
 
     [SerializeField] private TileBase[ ] pTiles = null;
     [SerializeField] private Material pWaterMaterial = null;
     [SerializeField] public Tilemap[ ] pMaps = null;
     [SerializeField] public float[ ] pMinTilesHeights = null;
     [SerializeField] public float[ ] pMaxTilesHeights = null;
+
+    [SerializeField] private Transform pWizardTransform = null;
 
     public const int nChunkSize = 16;
     public const int nRenderDistance = 1;
@@ -33,15 +35,12 @@ public class MapGenerator : MonoBehaviour {
     private Dictionary<Vector2Int, Chunk_t> aAllChunks = new Dictionary<Vector2Int, Chunk_t>( );
     private Dictionary<Vector2Int, Chunk_t> aVisibleChunks = new Dictionary<Vector2Int, Chunk_t>( );
     private Texture2D pHeightMapTexture = null;
-    private Transform pWizardTransform = null;
-    public Vector2Int vStartChunk = Vector2Int.zero;
+    private Vector2Int vStartChunk = Vector2Int.zero;
     private Vector2Int vPlayerChunkStart = Vector2Int.zero;
 
     private MapGeneratorHelper pHelper = new MapGeneratorHelper( );
 
     public void Init( ) {
-        this.pWizardTransform = GameObject.Find( "Wizard" ).transform;
-
         aAllChunks.Clear( );
         aVisibleChunks.Clear( );
     }
@@ -75,6 +74,9 @@ public class MapGenerator : MonoBehaviour {
             }
         }
 
+        List<Vector2Int> vRemovedChunksCoord = this.ClearFarChunks( this.aVisibleChunks, nRenderDistanceSize );
+        this.ClearFarChunks( this.aAllChunks, nRenderDistanceSize * 2 );
+
         vStartChunk = pHelper.FindStartChunk( this.aVisibleChunks );
 
         this.pHeightMapTexture = pHelper.GenerateHeightMapTexture( this.aVisibleChunks, this.vStartChunk );
@@ -84,9 +86,6 @@ public class MapGenerator : MonoBehaviour {
             pHelper.SetupMaterialData( pWaterMaterial, this.aVisibleChunks, this.pHeightMapTexture, this.vStartChunk );
         }
 
-        this.ClearFarChunks( this.aAllChunks, nRenderDistanceSize * 2 );
-
-        List<Vector2Int> vRemovedChunksCoord = this.ClearFarChunks( this.aVisibleChunks, nRenderDistanceSize );
         this.ClearTileMaps( vRemovedChunksCoord );
         this.FillTiles( vAddedChunks );
 
