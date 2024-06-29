@@ -2,11 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using System;
-using Unity.VisualScripting;
 /*
 TODO:
 1) clear this.allchunks if distance > 3 * nChunkSize.
-2) Do not rebuild chunks if it was wisible before.
 */
 public struct Chunk_t {
     public Vector2Int vPos;
@@ -14,24 +12,32 @@ public struct Chunk_t {
     public bool bVisible;
 }
 public class MapGenerator : MonoBehaviour {
-    [SerializeField] private TileBase pSandTile = null;
-    [SerializeField] private TileBase pWaterTile = null;
-    [SerializeField] private TileBase pWaterShadowTile = null;
-    [SerializeField] private Material pWaterMaterial = null;
-    [SerializeField] public Tilemap pLayer0TileMap = null;
-    [SerializeField] public Tilemap pLayer1TileMap = null;
-    [SerializeField] public Tilemap pLayer2TileMap = null;
+    [SerializeField] private float flPerlinScale = 48.0f;
+    [SerializeField] private int flPerlinOctaves = 5;
+    [SerializeField] private float flPersistence = 1f;
+    [SerializeField] private float flLacunarity = 1f;
+    [SerializeField] private float flPerlinBaseAmplitude = 0.50f;
+    [SerializeField] private int nSeed = 16275;
 
-    public static int nChunkSize = 16;
-    public static int nRenderDistance = 1;
-    public static int nChunksCountInLine = nRenderDistance * 2 + 1;
-    public static int nChunksSizeInLine = nChunksCountInLine * nChunkSize;
+    [SerializeField] private TileBase[ ] pTiles = null;
+    [SerializeField] private Material pWaterMaterial = null;
+    [SerializeField] public Tilemap[ ] pMaps = null;
+    [SerializeField] public float[ ] pMinTilesHeights = null;
+    [SerializeField] public float[ ] pMaxTilesHeights = null;
+
+    public const int nChunkSize = 16;
+    public const int nRenderDistance = 1;
+    public const int nChunksCountInLine = nRenderDistance * 2 + 1;
+    public const int nChunksSizeInLine = nChunksCountInLine * nChunkSize;
     private Dictionary<Vector2Int, Chunk_t> aAllChunks = new Dictionary<Vector2Int, Chunk_t>( );
     private Dictionary<Vector2Int, Chunk_t> aVisibleChunks = new Dictionary<Vector2Int, Chunk_t>( );
     private Texture2D pHeightMapTexture = null;
     private Transform pWizardTransform = null;
-    public static Vector2Int vStartChunk = Vector2Int.zero;
+    public Vector2Int vStartChunk = Vector2Int.zero;
     private Vector2Int vPlayerChunkStart = Vector2Int.zero;
+
+    private MapGeneratorHelper pHelper = new MapGeneratorHelper( );
+
     private void Start( ) {
         this.pWizardTransform = GameObject.Find( "Wizard" ).transform;
 
@@ -40,24 +46,24 @@ public class MapGenerator : MonoBehaviour {
     }
     private void Update( ) {
         Vector2Int vChunkPos = new Vector2Int( );
-        vChunkPos.x = MapGeneratorHelper.Rounded( this.pWizardTransform.transform.position.x / nChunkSize );
-        vChunkPos.y = MapGeneratorHelper.Rounded( this.pWizardTransform.transform.position.y / nChunkSize );
+        vChunkPos.x = pHelper.Rounded( this.pWizardTransform.transform.position.x / nChunkSize );
+        vChunkPos.y = pHelper.Rounded( this.pWizardTransform.transform.position.y / nChunkSize );
         EnableChunks( vChunkPos );
     }
 
     private void EnableChunks( Vector2Int vChunkPos ) {
         Vector2Int vNewChunkPos = new Vector2Int( vChunkPos.x * nChunkSize, vChunkPos.y * nChunkSize );
-        if (!MapGeneratorHelper.PositionIsNew( vNewChunkPos ))
+        if (!pHelper.PositionIsNew( vNewChunkPos ))
             return;
 
         vPlayerChunkStart = vNewChunkPos;
 
-        MapGeneratorHelper.FillNearestChunksUsingRenderDistance( nRenderDistance );
+        pHelper.FillNearestChunksUsingRenderDistance( nRenderDistance );
 
         List<Chunk_t> vAddedChunks = new List<Chunk_t>( );
         List<Vector2Int> vToRemoveCoords = new List<Vector2Int>( );
 
-        foreach (Vector2Int vChunkOffset in MapGeneratorHelper.aNearestChunksPos) {
+        foreach (Vector2Int vChunkOffset in pHelper.aNearestChunksPos) {
             Vector2Int nChunkStartPos = new Vector2Int(
                 vNewChunkPos.x + vChunkOffset.x * nChunkSize,
                 vNewChunkPos.y + vChunkOffset.y * nChunkSize );
@@ -72,19 +78,19 @@ public class MapGenerator : MonoBehaviour {
 
         vToRemoveCoords = this.ClearFarChunks( this.aVisibleChunks );
 
-        vStartChunk = MapGeneratorHelper.FindStartChunk( this.aVisibleChunks );
+        vStartChunk = pHelper.FindStartChunk( this.aVisibleChunks );
 
-        this.pHeightMapTexture = MapGeneratorHelper.GenerateHeightMapTexture( this.aVisibleChunks );
+        this.pHeightMapTexture = pHelper.GenerateHeightMapTexture( this.aVisibleChunks, this.vStartChunk );
         if (this.pHeightMapTexture != null) {
             this.pHeightMapTexture.Apply( );
 
-            MapGeneratorHelper.SetupMaterialData( pWaterMaterial, this.aVisibleChunks, this.pHeightMapTexture );
+            pHelper.SetupMaterialData( pWaterMaterial, this.aVisibleChunks, this.pHeightMapTexture, this.vStartChunk );
         }
 
         this.ClearTileMaps( vToRemoveCoords );
         this.FillTiles( vAddedChunks );
 
-        MapGeneratorHelper.vLastChunkPos = vNewChunkPos;
+        pHelper.vLastChunkPos = vNewChunkPos;
     }
 
     public void GenerateChunk( int x, int y ) {
@@ -94,46 +100,56 @@ public class MapGenerator : MonoBehaviour {
 
             pNewChunk.vPos = vChunkPos;
             pNewChunk.Heights = new float[ nChunkSize, nChunkSize ];
-            MapGeneratorHelper.FillChunkHeights( pNewChunk );
+
+            MapGeneratorHelper.PerlinGeneratorSettings pSettings = new MapGeneratorHelper.PerlinGeneratorSettings {
+                flPerlinScale = this.flPerlinScale,
+                flPerlinOctaves = this.flPerlinOctaves,
+                flPersistence = this.flPersistence,
+                flLacunarity = this.flLacunarity,
+                flPerlinBaseAmplitude = this.flPerlinBaseAmplitude
+            };
+
+            System.Random random = new System.Random( nSeed );
+            pSettings.vRandomOffsets = new Vector2[ this.flPerlinOctaves ];
+            for (int i = 0; i < this.flPerlinOctaves; i++)
+                pSettings.vRandomOffsets[ i ] = new Vector2( random.Next( -10000, 10000 ), random.Next( -10000, 10000 ) );
+
+            pHelper.FillChunkHeights( pNewChunk, pSettings );
             this.aAllChunks.Add( vChunkPos, pNewChunk );
         }
     }
 
     void FillTiles( List<Chunk_t> pAddedCoords ) {
-        if (!pLayer1TileMap || !pLayer2TileMap || !pLayer0TileMap)
+        if (this.pMaps == null || this.pMaps.Length <= 0)
             return;
 
         foreach (Chunk_t pChunk in pAddedCoords) {
+            TileBase[ ][ ] pTiles = new TileBase[ this.pMaps.Length ][ ];
+            for (int nMapLayer = 0; nMapLayer < this.pMaps.Length; nMapLayer++) {
+                pTiles[ nMapLayer ] = new TileBase[ nChunkSize * nChunkSize ];
 
-            int i = 0;
-            TileBase[ ] pTilesLayer0 = new TileBase[ nChunkSize * nChunkSize ];
-            TileBase[ ] pTilesLayer1 = new TileBase[ nChunkSize * nChunkSize ];
-            TileBase[ ] pTilesLayer2 = new TileBase[ nChunkSize * nChunkSize ];
+                int i = 0;
+                for (int y = 0; y < nChunkSize; y++) {
+                    for (int x = 0; x < nChunkSize; x++) {
 
-            for (int y = 0; y < nChunkSize; y++) {
-                for (int x = 0; x < nChunkSize; x++) {
-
-                    float flHeight = pChunk.Heights[ x, y ];
-                    if (flHeight > 0.5f) {
-                        pTilesLayer2[ i ] = pSandTile;
-                    } else {
-                        pTilesLayer0[ i ] = pWaterShadowTile;
-                        pTilesLayer1[ i ] = pWaterTile;
-                        //pTilesLayer2[ i ] = pSandTile;
+                        float flHeight = pChunk.Heights[ x, y ];
+                        if (flHeight >= this.pMinTilesHeights[ nMapLayer ] && flHeight < this.pMaxTilesHeights[ nMapLayer ])
+                            pTiles[ nMapLayer ][ i ] = this.pTiles[ nMapLayer ];
+                        i++;
                     }
-                    i++;
                 }
+
+                BoundsInt bounds = new BoundsInt(
+                    pChunk.vPos.x, pChunk.vPos.y, 0,
+                    nChunkSize, nChunkSize, 1
+                );
+
+                //pLayer0TileMap.SetTilesBlock( bounds, pTilesLayer0 );
+                //pLayer1TileMap.SetTilesBlock( bounds, pTilesLayer1 );
+                //pLayer2TileMap.SetTilesBlock( bounds, pTilesLayer2 );
+
+                this.pMaps[ nMapLayer ].SetTilesBlock( bounds, pTiles[ nMapLayer ] );
             }
-
-            BoundsInt bounds = new BoundsInt(
-                        pChunk.vPos.x, pChunk.vPos.y, 0,
-                        nChunkSize, nChunkSize, 1
-                    );
-
-            pLayer0TileMap.SetTilesBlock( bounds, pTilesLayer0 );
-            pLayer1TileMap.SetTilesBlock( bounds, pTilesLayer1 );
-            pLayer2TileMap.SetTilesBlock( bounds, pTilesLayer2 );
-
         }
     }
     public Chunk_t GetChunk( int x, int y ) {
@@ -193,9 +209,8 @@ public class MapGenerator : MonoBehaviour {
                 nChunkSize, nChunkSize, 1
             );
             TileBase[ ] nullTiles = new TileBase[ nChunkSize * nChunkSize ];
-            this.pLayer0TileMap.SetTilesBlock( bounds, nullTiles );
-            this.pLayer1TileMap.SetTilesBlock( bounds, nullTiles );
-            this.pLayer2TileMap.SetTilesBlock( bounds, nullTiles );
+            for (int i = 0; i < this.pMaps.Length; i++)
+                this.pMaps[ i ].SetTilesBlock( bounds, nullTiles );
         }
     }
 

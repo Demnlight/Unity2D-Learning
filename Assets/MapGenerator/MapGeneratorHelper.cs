@@ -1,60 +1,59 @@
-using System;
+
 using System.Collections.Generic;
-using System.Timers;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
-public class MapGeneratorHelper : MonoBehaviour {
+public class MapGeneratorHelper {
 
-    private static float PerlinScale = 48.0f;
-    private static int PerlinOctaves = 5;
-    private static float persistence = 1f;
-    private static float lacunarity = 1f;
-    private static float PerlinBaseAmplitude = 0.52f;
-    public static List<Vector2Int> aNearestChunksPos = new List<Vector2Int> {
-            Vector2Int.zero
-        };
-    public static Vector2Int vLastChunkPos = Vector2Int.one;
+    public struct PerlinGeneratorSettings {
+        public float flPerlinScale;
+        public int flPerlinOctaves;
+        public float flPersistence;
+        public float flLacunarity;
+        public float flPerlinBaseAmplitude;
+        public Vector2[ ] vRandomOffsets;
+    }
 
+    public List<Vector2Int> aNearestChunksPos = new List<Vector2Int> { Vector2Int.zero };
+    public Vector2Int vLastChunkPos = Vector2Int.one;
 
-    public static int Rounded( float flFrom ) {
+    public int Rounded( float flFrom ) {
         int nReturn = 0;
-
-        if (flFrom > 0.0f) {
-            nReturn = (int)Math.Floor( flFrom );
-        } else {
-            nReturn = -(int)Math.Ceiling( Math.Abs( flFrom ) );
-        }
+        if (flFrom > 0.0f)
+            nReturn = (int)System.Math.Floor( flFrom );
+        else
+            nReturn = -(int)System.Math.Ceiling( System.Math.Abs( flFrom ) );
 
         return nReturn;
     }
 
-    public static bool PositionIsNew( Vector2 position ) {
+    public bool PositionIsNew( Vector2 position ) {
         return (vLastChunkPos != position);
     }
 
-    public static void FillChunkHeights( Chunk_t pChunk ) {
+    public void FillChunkHeights( Chunk_t pChunk, PerlinGeneratorSettings pSettings ) {
         for (int x = 0; x < MapGenerator.nChunkSize; x++) {
             for (int y = 0; y < MapGenerator.nChunkSize; y++) {
-                float amplitude = PerlinBaseAmplitude;
+                float amplitude = pSettings.flPerlinBaseAmplitude;
                 float freq = 1;
                 float noiseHeight = 0;
 
-                for (int i = 0; i < PerlinOctaves; i++) {
-                    float px = (pChunk.vPos.x + x) / PerlinScale * freq;
-                    float py = (pChunk.vPos.y + y) / PerlinScale * freq;
+                for (int i = 0; i < pSettings.flPerlinOctaves; i++) {
+                    float px = (pChunk.vPos.x + x) / pSettings.flPerlinScale * freq + pSettings.vRandomOffsets[ i ].x;
+                    float py = (pChunk.vPos.y + y) / pSettings.flPerlinScale * freq + pSettings.vRandomOffsets[ i ].y;
 
                     float PerlinValue = Mathf.PerlinNoise( px, py ) * 2 - 1;
                     noiseHeight += PerlinValue * amplitude;
 
-                    amplitude *= persistence;
-                    freq *= lacunarity;
+                    amplitude *= pSettings.flPersistence;
+                    freq *= pSettings.flLacunarity;
                 }
                 noiseHeight = Mathf.InverseLerp( -1f, 1f, noiseHeight );
                 pChunk.Heights[ x, y ] = noiseHeight;
             }
         }
     }
-    public static Texture2D GenerateHeightMapTexture( Dictionary<Vector2Int, Chunk_t> aVisibleChunks ) {
+    public Texture2D GenerateHeightMapTexture( Dictionary<Vector2Int, Chunk_t> aVisibleChunks, Vector2Int vStartChunk ) {
         Texture2D heightMap = new Texture2D( MapGenerator.nChunksSizeInLine, MapGenerator.nChunksSizeInLine );
         foreach (var element in aVisibleChunks) {
             for (int x = 0; x < MapGenerator.nChunkSize; x++) {
@@ -62,8 +61,8 @@ public class MapGeneratorHelper : MonoBehaviour {
                     float height = element.Value.Heights[ x, y ];
                     Color colour = new Color( height, height, height, 1 );
 
-                    int nStartPosX = Math.Abs( element.Value.vPos.x - aVisibleChunks[ MapGenerator.vStartChunk ].vPos.x );
-                    int nStartPosY = Math.Abs( element.Value.vPos.y - aVisibleChunks[ MapGenerator.vStartChunk ].vPos.y );
+                    int nStartPosX = System.Math.Abs( element.Value.vPos.x - aVisibleChunks[ vStartChunk ].vPos.x );
+                    int nStartPosY = System.Math.Abs( element.Value.vPos.y - aVisibleChunks[ vStartChunk ].vPos.y );
 
                     heightMap.SetPixel( nStartPosX + x, nStartPosY + y, colour );
                 }
@@ -71,15 +70,15 @@ public class MapGeneratorHelper : MonoBehaviour {
         }
         return heightMap;
     }
-    public static void SetupMaterialData( Material pWaterMaterial, Dictionary<Vector2Int, Chunk_t> aVisibleChunks, Texture2D pHeightMapTexture ) {
-        Vector2 vMapPos = new Vector2( aVisibleChunks[ MapGenerator.vStartChunk ].vPos.x, aVisibleChunks[ MapGenerator.vStartChunk ].vPos.y );
+    public void SetupMaterialData( Material pWaterMaterial, Dictionary<Vector2Int, Chunk_t> aVisibleChunks, Texture2D pHeightMapTexture, Vector2Int vStartChunk ) {
+        Vector2 vMapPos = new Vector2( aVisibleChunks[ vStartChunk ].vPos.x, aVisibleChunks[ vStartChunk ].vPos.y );
 
         pWaterMaterial.SetTexture( "_HeightMap", pHeightMapTexture );
         pWaterMaterial.SetFloat( "_CurrentWorldTextureScale", 1.0f / MapGenerator.nChunksSizeInLine );
         pWaterMaterial.SetVector( "_CurrentWorldTexturePos", vMapPos );
     }
 
-    public static void FillNearestChunksUsingRenderDistance( int nRenderDistance ) {
+    public void FillNearestChunksUsingRenderDistance( int nRenderDistance ) {
         aNearestChunksPos.Clear( );
 
         for (int x = -nRenderDistance; x <= nRenderDistance; x++) {
@@ -89,7 +88,7 @@ public class MapGeneratorHelper : MonoBehaviour {
         }
     }
 
-    public static Vector2Int FindStartChunk( Dictionary<Vector2Int, Chunk_t> aVisibleChunks ) {
+    public Vector2Int FindStartChunk( Dictionary<Vector2Int, Chunk_t> aVisibleChunks ) {
         Vector2Int vReturn = Vector2Int.zero;
 
         int nMinX = int.MaxValue;
@@ -105,7 +104,7 @@ public class MapGeneratorHelper : MonoBehaviour {
         vReturn = new Vector2Int( nMinX, nMinY );
         return vReturn;
     }
-    public static Vector2Int FindStartChunk( List<Vector2Int> aSearchebleZone ) {
+    public Vector2Int FindStartChunk( List<Vector2Int> aSearchebleZone ) {
         Vector2Int vReturn = Vector2Int.zero;
 
         int nMinX = int.MaxValue;
