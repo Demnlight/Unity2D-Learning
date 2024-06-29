@@ -17,7 +17,7 @@ public class MapGenerator : MonoBehaviour {
     public TileBase pWaterShadowTile = null;
     public Material pWaterMaterial = null;
     public static int ChunkSize = 16;
-    public static int ChunkCount = 2;
+    public static int ChunkCount = 1;
     public static int nChunksCountInLine = ChunkCount * 2 + 1;
     public static int nChunksSizeInLine = nChunksCountInLine * ChunkSize;
     public Dictionary<Vector2Int, Chunk_t> aAllChunks = new Dictionary<Vector2Int, Chunk_t>( );
@@ -109,7 +109,7 @@ public class MapGenerator : MonoBehaviour {
                     } else {
                         pTilesLayer0[ i ] = pWaterShadowTile;
                         pTilesLayer1[ i ] = pWaterTile;
-                        pTilesLayer2[ i ] = pSandTile;
+                        //pTilesLayer2[ i ] = pSandTile;
                     }
 
                     BoundsInt bounds = new BoundsInt(

@@ -282,7 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26bc867c626f340c6bf5ff02555651d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pSandTile: {fileID: 11400000, guid: a1401c1abf6174754a9a2dd69e0276f6, type: 2}
+  pSandTile: {fileID: 11400000, guid: 3a936e2337bc045028b64bbd5d33c034, type: 2}
   pWaterTile: {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
   pWaterShadowTile: {fileID: 11400000, guid: 148b01989c67c48bba21e7fabe42aefb, type: 2}
   pWaterMaterial: {fileID: 2100000, guid: 3376745178c2a45b7b67cd3a93406ffa, type: 2}
@@ -1310,7 +1310,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 062e7e990a1154a019655dadb001d8ef, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
