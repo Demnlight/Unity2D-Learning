@@ -126,18 +126,6 @@ public class MapGenerator : MonoBehaviour {
             TileBase[ ][ ] pTiles = new TileBase[ this.pMaps.Length ][ ];
             for (int nMapLayer = 0; nMapLayer < this.pMaps.Length; nMapLayer++) {
                 pTiles[ nMapLayer ] = new TileBase[ nChunkSize * nChunkSize ];
-
-                int i = 0;
-                for (int y = 0; y < nChunkSize; y++) {
-                    for (int x = 0; x < nChunkSize; x++) {
-
-                        float flHeight = pChunk.Heights[ x, y ];
-                        if (flHeight >= this.pMinTilesHeights[ nMapLayer ] && flHeight < this.pMaxTilesHeights[ nMapLayer ])
-                            pTiles[ nMapLayer ][ i ] = this.pTiles[ nMapLayer ];
-                        i++;
-                    }
-                }
-
                 pTiles[ nMapLayer ] = pHelper.GetTiles( pChunk,
                     this.pMinTilesHeights[nMapLayer], this.pMaxTilesHeights[nMapLayer],
                     this.pTiles[ nMapLayer ]
