@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent( typeof( Rigidbody2D ) )]
 public class playerMovement : MonoBehaviour {
     [SerializeField] private float maxSpeed = 250f;
     [SerializeField] private float friction = 0.9f;
