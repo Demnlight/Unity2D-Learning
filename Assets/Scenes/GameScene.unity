@@ -219,7 +219,7 @@ MonoBehaviour:
   flPersistence: 1
   flLacunarity: 1
   flPerlinBaseAmplitude: 0.5
-  nSeed: 0
+  nSeed: 16275
   pTiles:
   - {fileID: 11400000, guid: 148b01989c67c48bba21e7fabe42aefb, type: 2}
   - {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovement: {fileID: 1265153563}
   fovManager: {fileID: 519420035}
-  mapGenerator: {fileID: 304237356}
+  generator: {fileID: 304237356}
 --- !u!4 &611928458
 Transform:
   m_ObjectHideFlags: 0
