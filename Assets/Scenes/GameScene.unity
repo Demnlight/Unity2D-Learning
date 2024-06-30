@@ -122,74 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &117115880
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 117115883}
-  - component: {fileID: 117115882}
-  - component: {fileID: 117115881}
-  m_Layer: 0
-  m_Name: EventSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &117115881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 117115880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
---- !u!114 &117115882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 117115880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
---- !u!4 &117115883
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 117115880}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &248166469
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,13 +214,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26bc867c626f340c6bf5ff02555651d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pSandTile: {fileID: 11400000, guid: 3a936e2337bc045028b64bbd5d33c034, type: 2}
-  pWaterTile: {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
-  pWaterShadowTile: {fileID: 11400000, guid: 148b01989c67c48bba21e7fabe42aefb, type: 2}
+  flPerlinScale: 64
+  flPerlinOctaves: 5
+  flPersistence: 0.5
+  flLacunarity: 1.5
+  flPerlinBaseAmplitude: 1
+  nSeed: 16275
+  pTiles:
+  - {fileID: 11400000, guid: 148b01989c67c48bba21e7fabe42aefb, type: 2}
+  - {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
+  - {fileID: 11400000, guid: 3a936e2337bc045028b64bbd5d33c034, type: 2}
+  pMaps:
+  - {fileID: 1794443913}
+  - {fileID: 804981702}
+  - {fileID: 1299320822}
+  pMinTilesHeights:
+  - 0
+  - 0
+  - 0
+  pMaxTilesHeights:
+  - 0.5
+  - 0.5
+  - 1
   pWaterMaterial: {fileID: 2100000, guid: 3376745178c2a45b7b67cd3a93406ffa, type: 2}
-  pLayer1TileMap: {fileID: 804981702}
-  pLayer2TileMap: {fileID: 1299320822}
-  pLayer0TileMap: {fileID: 1794443913}
+  pSandMaterial: {fileID: 2100000, guid: 062e7e990a1154a019655dadb001d8ef, type: 2}
+  pWizardTransform: {fileID: 1265153555}
 --- !u!1 &433522022
 GameObject:
   m_ObjectHideFlags: 0
@@ -755,6 +705,53 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1265153563}
   m_SourcePrefab: {fileID: 100100000, guid: ebea5f8b8163f9a4ab9d9a1b45444e28, type: 3}
+--- !u!1 &611928456
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 611928458}
+  - component: {fileID: 611928457}
+  m_Layer: 0
+  m_Name: Initializer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &611928457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 611928456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 384cb2795eccc4e64a6e09ccc711f1fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMovement: {fileID: 1265153563}
+  fovManager: {fileID: 519420035}
+  generator: {fileID: 304237356}
+--- !u!4 &611928458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 611928456}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1219,7 +1216,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 5
-  acceleration: 50
   friction: 0.9
 --- !u!1 &1299320821
 GameObject:
@@ -1297,7 +1293,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 062e7e990a1154a019655dadb001d8ef, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1573,7 +1569,7 @@ Tilemap:
   m_TileColorArray: []
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 0.6509804, g: 0.4745098, b: 0.27058825, a: 1}
+  m_Color: {r: 0, g: 0.02745098, b: 0.5372549, a: 0.09803922}
   m_Origin: {x: 0, y: 0, z: 0}
   m_Size: {x: 0, y: 0, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
@@ -1599,9 +1595,9 @@ Tilemap:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 611928458}
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 304237355}
   - {fileID: 993579364}
   - {fileID: 248166470}
-  - {fileID: 117115883}

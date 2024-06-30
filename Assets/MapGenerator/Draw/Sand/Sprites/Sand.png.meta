@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9dad7f0d1043440f4a901ffa1512ae06
+guid: a7cab9fd778084c58b8ff3b8c32e056f
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -97,11 +97,11 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: DarinaSand_0
+      name: Sand_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 48
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -111,18 +111,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f0ce29aa6dce84ef2a0c597b8cdd8055
-      internalID: 791427679
+      spriteID: f3117fd7bc5a74aa9988727fe9d28802
+      internalID: -1253439341
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarinaSand_1
+      name: Sand_1
       rect:
         serializedVersion: 2
         x: 16
-        y: 48
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -132,18 +132,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3c662d977362748cb9b18d23d8425970
-      internalID: 719170562
+      spriteID: 297cd5f7a4c664aa5afd989b33b860d5
+      internalID: -561599548
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarinaSand_2
+      name: Sand_2
       rect:
         serializedVersion: 2
         x: 32
-        y: 48
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -153,18 +153,81 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: add6abbbb14404a3f98b370657a58299
-      internalID: 157746711
+      spriteID: 015b775078b1046dd873e5975d2274a5
+      internalID: -533625144
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarinaSand_3
+      name: Sand_3
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 112
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7dfa748774a345569da904557c400b8
+      internalID: -1289439779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_4
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 112
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ac0952d87aa44e6183953de0e355153
+      internalID: 1966970534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_5
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 112
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b66f5ebbc73cb4df7882891f98513fea
+      internalID: 1296706812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_6
       rect:
         serializedVersion: 2
         x: 0
-        y: 32
+        y: 96
         width: 16
         height: 16
       alignment: 0
@@ -174,18 +237,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 88e199c7cae3945ab909e3937df4a6ca
-      internalID: 1953170036
+      spriteID: d4df16186ed5946acaaff8880899be5c
+      internalID: -1401526281
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarinaSand_4
+      name: Sand_7
       rect:
         serializedVersion: 2
         x: 16
-        y: 32
+        y: 96
         width: 16
         height: 16
       alignment: 0
@@ -195,18 +258,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: eb81f267e64bf4497b350fad50b63532
-      internalID: 1453600406
+      spriteID: 8a2885993764a4add886de262969251a
+      internalID: 632657491
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarinaSand_5
+      name: Sand_8
       rect:
         serializedVersion: 2
         x: 32
-        y: 32
+        y: 96
         width: 16
         height: 16
       alignment: 0
@@ -216,18 +279,81 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 34a8974491a8c4dd382bc73c5dab8d56
-      internalID: -887231372
+      spriteID: 2651137fc928848db9eada1b2d5a2b6f
+      internalID: 491183238
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarinaSand_6
+      name: Sand_9
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f961937bace64856900ce773e3311db
+      internalID: -221776780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_10
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1279a5b61e19497685978ac84eb8116
+      internalID: 170225561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_11
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ceda7c7ed738d48719eaa2212a19c46a
+      internalID: -162808963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_12
       rect:
         serializedVersion: 2
         x: 0
-        y: 16
+        y: 80
         width: 16
         height: 16
       alignment: 0
@@ -237,18 +363,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4bf3ea5794a924455861f7c7f1896177
-      internalID: 1648075779
+      spriteID: aeeee9320b1a645eabb88c5b5b733b74
+      internalID: 487955752
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarinaSand_7
+      name: Sand_13
       rect:
         serializedVersion: 2
         x: 16
-        y: 16
+        y: 80
         width: 16
         height: 16
       alignment: 0
@@ -258,18 +384,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 834d04f8c4fd948e69620d813430043e
-      internalID: -2057480023
+      spriteID: 320e09491178a478f84d379c5120827e
+      internalID: 1394142079
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DarinaSand_8
+      name: Sand_14
       rect:
         serializedVersion: 2
         x: 32
-        y: 16
+        y: 80
         width: 16
         height: 16
       alignment: 0
@@ -279,8 +405,71 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c35d62bdd4364472a99620f28e568d29
-      internalID: -1611120893
+      spriteID: 960f83e2560ca46de94d2b03b10212a7
+      internalID: -281945216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_15
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 80
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccbee9e2a65cc4b699a77af1e864eb13
+      internalID: 11769474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_16
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 80
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38ceef2c49cea43669bd2ffac02f7c4c
+      internalID: 2093700559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand_17
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 53
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2dcdc79331ca47049924cae47d632f1
+      internalID: 1008962649
       vertices: []
       indices: 
       edges: []
@@ -296,15 +485,24 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      DarinaSand_0: 791427679
-      DarinaSand_1: 719170562
-      DarinaSand_2: 157746711
-      DarinaSand_3: 1953170036
-      DarinaSand_4: 1453600406
-      DarinaSand_5: -887231372
-      DarinaSand_6: 1648075779
-      DarinaSand_7: -2057480023
-      DarinaSand_8: -1611120893
+      Sand_0: -1253439341
+      Sand_1: -561599548
+      Sand_10: 170225561
+      Sand_11: -162808963
+      Sand_12: 487955752
+      Sand_13: 1394142079
+      Sand_14: -281945216
+      Sand_15: 11769474
+      Sand_16: 2093700559
+      Sand_17: 1008962649
+      Sand_2: -533625144
+      Sand_3: -1289439779
+      Sand_4: 1966970534
+      Sand_5: 1296706812
+      Sand_6: -1401526281
+      Sand_7: 632657491
+      Sand_8: 491183238
+      Sand_9: -221776780
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

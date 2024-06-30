@@ -65,11 +65,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets/BaseEntity/Player/PlayerInputActions.cs" />
+    <Compile Include="Assets/MapGenerator/ChunksData.cs" />
     <Compile Include="Assets/MapGenerator/MapGeneratorHelper.cs" />
     <Compile Include="Assets/BaseEntity/Player/PlayerMovement.cs" />
     <Compile Include="Assets/BaseEntity/Camera/FovManager.cs" />
+    <Compile Include="Assets/Initialization.cs" />
     <Compile Include="Assets/BaseEntity/Camera/FollowPlayer.cs" />
-    <Compile Include="Assets/MapGenerator/MapGenerator.cs" />
+    <Compile Include="Assets/MapGenerator/Generator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />

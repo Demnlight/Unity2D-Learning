@@ -1,16 +1,17 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent( typeof( Rigidbody2D ) )]
 public class playerMovement : MonoBehaviour {
-    [SerializeField] private float maxSpeed = 250f;
-    [SerializeField] private float acceleration = 250f;
-    [SerializeField] private float friction = 0.9f;
+    [SerializeField, Range( 0, 9999 )] private float maxSpeed = 250f;
+    [SerializeField, Range( 0, 0.99f )] private float friction = 0.9f;
 
     private Rigidbody2D rb;
     private PlayerInputActions inputActions;
     private Vector2 vMovingDirection;
 
-    void Awake( ) {
+    public void Init( ) {
         rb = GetComponent<Rigidbody2D>( );
 
         inputActions = new PlayerInputActions( );
@@ -18,6 +19,9 @@ public class playerMovement : MonoBehaviour {
     }
 
     private void FixedUpdate( ) {
+        if (inputActions == null)
+            throw new ArgumentException("inputActions == null");
+
         vMovingDirection = inputActions.Player.Move.ReadValue<Vector2>( );
 
         Vector2 targetVelocity = vMovingDirection * maxSpeed;

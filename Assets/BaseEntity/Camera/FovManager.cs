@@ -8,7 +8,7 @@ public class FovManager : MonoBehaviour {
     public float flCameraSpeed = 5.0f;
 
     // Start is called before the first frame update
-    void Start( ) {
+    public void Init( ) {
         pCamera = Camera.main;
         pCamera.orthographicSize = flDefaultFov;
     }
