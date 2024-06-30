@@ -214,17 +214,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26bc867c626f340c6bf5ff02555651d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flPerlinScale: 48
+  flPerlinScale: 64
   flPerlinOctaves: 5
-  flPersistence: 1
-  flLacunarity: 1
-  flPerlinBaseAmplitude: 0.5
+  flPersistence: 0.5
+  flLacunarity: 1.5
+  flPerlinBaseAmplitude: 1
   nSeed: 16275
   pTiles:
   - {fileID: 11400000, guid: 148b01989c67c48bba21e7fabe42aefb, type: 2}
   - {fileID: 11400000, guid: f3f8497b1614f43d6915ff827b0bf27a, type: 2}
   - {fileID: 11400000, guid: 3a936e2337bc045028b64bbd5d33c034, type: 2}
-  pWaterMaterial: {fileID: 2100000, guid: 3376745178c2a45b7b67cd3a93406ffa, type: 2}
   pMaps:
   - {fileID: 1794443913}
   - {fileID: 804981702}
@@ -232,11 +231,13 @@ MonoBehaviour:
   pMinTilesHeights:
   - 0
   - 0
-  - 0.5
+  - 0
   pMaxTilesHeights:
-  - 0.51
-  - 0.51
+  - 0.5
+  - 0.5
   - 1
+  pWaterMaterial: {fileID: 2100000, guid: 3376745178c2a45b7b67cd3a93406ffa, type: 2}
+  pSandMaterial: {fileID: 2100000, guid: 062e7e990a1154a019655dadb001d8ef, type: 2}
   pWizardTransform: {fileID: 1265153555}
 --- !u!1 &433522022
 GameObject:
@@ -1292,7 +1293,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 062e7e990a1154a019655dadb001d8ef, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1568,7 +1569,7 @@ Tilemap:
   m_TileColorArray: []
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 0.6509804, g: 0.4745098, b: 0.27058825, a: 1}
+  m_Color: {r: 0, g: 0.02745098, b: 0.5372549, a: 0.09803922}
   m_Origin: {x: 0, y: 0, z: 0}
   m_Size: {x: 0, y: 0, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}

@@ -14,10 +14,11 @@ public class Generator : MonoBehaviour {
     [SerializeField, Range( 0, 320000 )] private int nSeed = 16275;
 
     [SerializeField] private TileBase[ ] pTiles = null;
-    [SerializeField] private Material pWaterMaterial = null;
     [SerializeField] public Tilemap[ ] pMaps = null;
     [SerializeField] public float[ ] pMinTilesHeights = null;
     [SerializeField] public float[ ] pMaxTilesHeights = null;
+    [SerializeField] private Material pWaterMaterial = null;
+    [SerializeField] private Material pSandMaterial = null;
 
     [SerializeField] private Transform pWizardTransform = null;
 
@@ -32,49 +33,38 @@ public class Generator : MonoBehaviour {
     public void Init( ) {
         pChunksData.aAllChunks.Clear( );
         pChunksData.aVisibleChunks.Clear( );
+
+        pChunksData.pSettings = new PerlinGeneratorSettings {
+            flPerlinScale = this.flPerlinScale,
+            nPerlinOctaves = this.flPerlinOctaves,
+            flPersistence = this.flPersistence,
+            flLacunarity = this.flLacunarity,
+            flPerlinBaseAmplitude = this.flPerlinBaseAmplitude
+        };
+
+        System.Random random = new System.Random( nSeed );
+        pChunksData.pSettings.vRandomOffsets = new Vector2[ this.flPerlinOctaves ];
+        for (int i = 0; i < this.flPerlinOctaves; i++)
+            pChunksData.pSettings.vRandomOffsets[ i ] = new Vector2( random.Next( -10000, 10000 ), random.Next( -10000, 10000 ) );
     }
 
     private void Update( ) {
         Vector2Int vChunkPos = new Vector2Int( );
         vChunkPos.x = pHelper.Rounded( this.pWizardTransform.transform.position.x / ChunkConsts.nChunkSize );
         vChunkPos.y = pHelper.Rounded( this.pWizardTransform.transform.position.y / ChunkConsts.nChunkSize );
-        EnableChunks( vChunkPos );
+        UpdateChunks( vChunkPos );
     }
 
-    public Chunk_t GetChunk( int x, int y ) {
-        Vector2Int vChunkPos = new Vector2Int( x, y );
-        if (pChunksData.aVisibleChunks.ContainsKey( vChunkPos )) {
-            return pChunksData.aVisibleChunks[ vChunkPos ];
-        } else {
-            if (!pChunksData.aAllChunks.ContainsKey( vChunkPos ))
-                GenerateChunk( x, y );
-
-            return pChunksData.aAllChunks[ vChunkPos ];
-        }
-    }
-
-    private void EnableChunks( Vector2Int vChunkPos ) {
+    private void UpdateChunks( Vector2Int vChunkPos ) {
         Vector2Int vNewChunkPos = new Vector2Int( vChunkPos.x * ChunkConsts.nChunkSize, vChunkPos.y * ChunkConsts.nChunkSize );
-        if (!pHelper.PositionIsNew( vNewChunkPos ))
+        if (!pChunksData.PositionIsNew( vNewChunkPos ))
             return;
 
         vPlayerChunkStart = vNewChunkPos;
 
-        pHelper.FillNearestChunksUsingRenderDistance( ChunkConsts.nRenderDistance );
+        pChunksData.GetNearestChunks( ChunkConsts.nRenderDistance );
 
-        List<Chunk_t> vAddedChunks = new List<Chunk_t>( );
-        foreach (Vector2Int vChunkOffset in pHelper.aNearestChunksPos) {
-            Vector2Int nChunkStartPos = new Vector2Int(
-                vNewChunkPos.x + vChunkOffset.x * ChunkConsts.nChunkSize,
-                vNewChunkPos.y + vChunkOffset.y * ChunkConsts.nChunkSize );
-
-            Chunk_t offsetChunk = GetChunk( nChunkStartPos.x, nChunkStartPos.y );
-            if (!offsetChunk.bVisible) {
-                offsetChunk.bVisible = true;
-                vAddedChunks.Add( offsetChunk );
-                pChunksData.aVisibleChunks.Add( offsetChunk.vPos, offsetChunk );
-            }
-        }
+        List<Chunk_t> vAddedChunks = pChunksData.GenerateVisibleChunks( vNewChunkPos );
 
         List<Vector2Int> vRemovedChunksCoord = this.ClearFarChunks( pChunksData.aVisibleChunks, ChunkConsts.nRenderDistanceSize );
         this.ClearFarChunks( pChunksData.aAllChunks, ChunkConsts.nRenderDistanceSize * 2 );
@@ -86,38 +76,14 @@ public class Generator : MonoBehaviour {
             this.pHeightMapTexture.Apply( );
 
             pHelper.SetupMaterialData( pWaterMaterial, pChunksData.aVisibleChunks, this.pHeightMapTexture, this.vStartChunk );
+            pHelper.SetupMaterialData( pSandMaterial, pChunksData.aVisibleChunks, this.pHeightMapTexture, this.vStartChunk );
+
         }
 
         this.ClearTileMaps( vRemovedChunksCoord );
         this.FillTiles( vAddedChunks );
 
-        pHelper.vLastChunkPos = vNewChunkPos;
-    }
-
-    public void GenerateChunk( int x, int y ) {
-        Vector2Int vChunkPos = new Vector2Int( x, y );
-        if (!pChunksData.aAllChunks.ContainsKey( vChunkPos )) {
-            Chunk_t pNewChunk = new Chunk_t( );
-
-            pNewChunk.vPos = vChunkPos;
-            pNewChunk.Heights = new float[ ChunkConsts.nChunkSize, ChunkConsts.nChunkSize ];
-
-            Helper.PerlinGeneratorSettings pSettings = new Helper.PerlinGeneratorSettings {
-                flPerlinScale = this.flPerlinScale,
-                flPerlinOctaves = this.flPerlinOctaves,
-                flPersistence = this.flPersistence,
-                flLacunarity = this.flLacunarity,
-                flPerlinBaseAmplitude = this.flPerlinBaseAmplitude
-            };
-
-            System.Random random = new System.Random( nSeed );
-            pSettings.vRandomOffsets = new Vector2[ this.flPerlinOctaves ];
-            for (int i = 0; i < this.flPerlinOctaves; i++)
-                pSettings.vRandomOffsets[ i ] = new Vector2( random.Next( -10000, 10000 ), random.Next( -10000, 10000 ) );
-
-            pHelper.FillChunkHeights( pNewChunk, pSettings );
-            pChunksData.aAllChunks.Add( vChunkPos, pNewChunk );
-        }
+        pChunksData.vLastChunkPos = vNewChunkPos;
     }
 
     void FillTiles( List<Chunk_t> pAddedCoords ) {
@@ -144,7 +110,7 @@ public class Generator : MonoBehaviour {
     }
 
     private void OnDrawGizmos( ) {
-        foreach (var c in pChunksData.aVisibleChunks) {
+        /*foreach (var c in pChunksData.aVisibleChunks) {
             Vector3 ChunkPosition = new Vector3( c.Value.vPos.x * ChunkConsts.nChunkSize, c.Value.vPos.y * ChunkConsts.nChunkSize );
             for (int x = 0; x < ChunkConsts.nChunkSize; x++) {
                 for (int y = 0; y < ChunkConsts.nChunkSize; y++) {
@@ -155,20 +121,19 @@ public class Generator : MonoBehaviour {
                     Gizmos.DrawCube( vCellPos, Vector3.one );
                 }
             }
-        }
+        }*/
     }
 
     private void OnGUI( ) {
-        /*return;
-        Vector3 vMousePos = Input.mousePosition;
+        /*Vector3 vMousePos = Input.mousePosition;
         Vector3 vWorldPosition = Camera.main.ScreenToWorldPoint( vMousePos );
 
         Vector2Int vChunkPos = new Vector2Int( );
-        vChunkPos.x = MapGeneratorHelper.Rounded( vWorldPosition.x / nChunkSize );
-        vChunkPos.y = MapGeneratorHelper.Rounded( vWorldPosition.y / nChunkSize );
+        vChunkPos.x = pHelper.Rounded( vWorldPosition.x / ChunkConsts.nChunkSize );
+        vChunkPos.y = pHelper.Rounded( vWorldPosition.y / ChunkConsts.nChunkSize );
 
-        Vector2Int vNewChunkPos = new Vector2Int( vChunkPos.x * nChunkSize, vChunkPos.y * nChunkSize );
-        Chunk_t pChunk = GetChunk( vNewChunkPos.x, vNewChunkPos.y );
+        Vector2Int vNewChunkPos = new Vector2Int( vChunkPos.x * ChunkConsts.nChunkSize, vChunkPos.y * ChunkConsts.nChunkSize );
+        Chunk_t pChunk = pChunksData.GetChunk( vNewChunkPos.x, vNewChunkPos.y );
 
         if (pChunk.Heights != null) {
             int nX = Math.Abs( pChunk.vPos.x - (int)vWorldPosition.x );
