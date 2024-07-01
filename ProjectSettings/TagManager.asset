@@ -9,6 +9,9 @@ TagManager:
   - Water
   - Sand
   - Ground
+  - HasMask
+  - PlayerRenderMask
+  - PlayerSkeleton
   layers:
   - Default
   - TransparentFX

@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using Scripts.MapGenerator;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent( typeof( Rigidbody2D ) )]
 public class playerMovement : MonoBehaviour {
@@ -27,7 +25,7 @@ public class playerMovement : MonoBehaviour {
 
     private void FixedUpdate( ) {
         if (inputActions == null)
-            throw new ArgumentException( "inputActions == null" );
+            throw new InvalidOperationException( "inputActions == null" );
 
         vMovingDirection = inputActions.Player.Move.ReadValue<Vector2>( );
 
