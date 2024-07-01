@@ -27,8 +27,8 @@ public class Generator : MonoBehaviour {
     private Vector2Int vStartChunk = Vector2Int.zero;
     private Vector2Int vPlayerChunkStart = Vector2Int.zero;
 
-    private Helper pHelper = new Helper( );
-    private ChunksData pChunksData = new ChunksData( );
+    public Helper pHelper = new Helper( );
+    public ChunksData pChunksData = new ChunksData( );
 
     public void Init( ) {
         pChunksData.aAllChunks.Clear( );
