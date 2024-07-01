@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Video;
 
 public class FollowPlayer : MonoBehaviour {
     public Transform pTarget = null;

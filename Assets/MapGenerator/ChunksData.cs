@@ -19,6 +19,14 @@ namespace Scripts.MapGenerator {
         public const int nRenderDistanceSize = nRenderDistance * nChunkSize;
         public const int nChunksCountInLine = nRenderDistance * 2 + 1;
         public const int nChunksSizeInLine = nChunksCountInLine * nChunkSize;
+
+        public readonly Dictionary<ChunksBiomes_t, Biome_t> aBiomes = new Dictionary<ChunksBiomes_t, Biome_t>( ) {
+            { ChunksBiomes_t.RIVER, new Biome_t( 0.4f, 0.5f, 0, 50, 50, 100 ) },
+            { ChunksBiomes_t.OCEAN, new Biome_t( 0f, 0.4f, 0, 50, 50, 100 ) },
+            { ChunksBiomes_t.BEACH, new Biome_t( 0.5f, 0.55f, 0, 50, 50, 100 ) },
+            { ChunksBiomes_t.FOREST, new Biome_t( 0.5f, 0.75f, 0, 30, 40, 80 ) },
+            { ChunksBiomes_t.NONE, new Biome_t( 0f, 1.0f, 0, 100, 0, 100 ) },
+        };
     }
 
     public class ChunksData {
@@ -122,5 +130,33 @@ namespace Scripts.MapGenerator {
         public Vector2Int vPos;
         public float[ , ] Heights;
         public bool bVisible;
+    }
+
+    public struct Biome_t {
+        float flMinHeight;
+        float flMaxHeight;
+        int nMinTemperature;
+        int nMaxTemperature;
+        float flMinHumidity;
+        float flMaxHumidity;
+
+        public Biome_t(
+            float flMinHeight, float flMaxHeight,
+            int nMinTemperature, int nMaxTemperature,
+            float flMinHumidity, float flMaxHumidity ) {
+            this.flMinHeight = flMinHeight;
+            this.flMaxHeight = flMaxHeight;
+            this.nMinTemperature = nMinTemperature;
+            this.nMaxTemperature = nMaxTemperature;
+            this.flMinHumidity = flMinHumidity;
+            this.flMaxHumidity = flMaxHumidity;
+        }
+    }
+    public enum ChunksBiomes_t {
+        NONE,
+        OCEAN,
+        RIVER,
+        BEACH,
+        FOREST
     }
 }
