@@ -103,7 +103,7 @@ Material:
     - _CausticColour: {r: 0.45490196, g: 0.77254903, b: 0.7647059, a: 0.11764706}
     - _CausticHighlightColour: {r: 1, g: 1, b: 1, a: 0.3529412}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _CurrentWorldTexturePos: {r: -32, g: -32, b: 0, a: 0}
+    - _CurrentWorldTexturePos: {r: 0, g: -16, b: 0, a: 0}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _FoamColour: {r: 0.83703923, g: 0.8254717, b: 1, a: 1}
     - _FoamTexelSize: {r: 0.005, g: 0.005, b: 0, a: 0}

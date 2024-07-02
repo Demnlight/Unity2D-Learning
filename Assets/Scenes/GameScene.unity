@@ -552,7 +552,7 @@ PrefabInstance:
     - target: {fileID: 1033345496715685164, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.999837
+      value: 0.99994147
       objectReference: {fileID: 0}
     - target: {fileID: 1033345496715685164, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
@@ -567,12 +567,12 @@ PrefabInstance:
     - target: {fileID: 1033345496715685164, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.018056426
+      value: -0.010818665
       objectReference: {fileID: 0}
     - target: {fileID: 1033345496715685164, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 2.069
+      value: -1.24
       objectReference: {fileID: 0}
     - target: {fileID: 2527981395275897858, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
@@ -618,6 +618,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 5.722
+      objectReference: {fileID: 0}
+    - target: {fileID: 3979805269707158511, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.18828042
+      objectReference: {fileID: 0}
+    - target: {fileID: 3979805269707158511, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3979805269707158511, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3979805269707158511, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.9821153
+      objectReference: {fileID: 0}
+    - target: {fileID: 3979805269707158511, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 158.295
       objectReference: {fileID: 0}
     - target: {fileID: 4105362945620786468, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
@@ -743,6 +768,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RenderingLayerMask
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5370826101065243464, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+        type: 3}
+      propertyPath: m_FlipX
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5370826101065243464, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
         type: 3}
