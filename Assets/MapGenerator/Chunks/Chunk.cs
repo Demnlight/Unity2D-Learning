@@ -12,7 +12,6 @@ namespace Scripts.Chunks {
         public bool bRendering = false;
         public abstract float[ , ] GetMapHeights { get; }
         public abstract void GenerateHeightMap( );
-        public abstract void SetupTiles( TileSetupperSettings settings );
         public abstract TileBase[ ] GetTiles( float flMinTileHeight, float flMaxTileHeight, TileBase pTile );
     }
 
@@ -26,25 +25,6 @@ namespace Scripts.Chunks {
             for (int x = 0; x < ChunkConstants.nChunkSize; x++)
                 for (int y = 0; y < ChunkConstants.nChunkSize; y++)
                     this.aMapHeights[ x, y ] = Initialization.perlinGenerator.GetHeight( this.vPos, new Vector2Int( x, y ) );
-        }
-
-        public override void SetupTiles( TileSetupperSettings settings ) {
-            TileBase[ ][ ] pLocalTiles = new TileBase[ settings.pMaps.Length ][ ];
-            for (int nMapLayer = 0; nMapLayer < settings.pMaps.Length; nMapLayer++) {
-                pLocalTiles[ nMapLayer ] = new TileBase[ ChunkConstants.nChunkSize * ChunkConstants.nChunkSize ];
-
-                pLocalTiles[ nMapLayer ] = this.GetTiles(
-                    settings.pMinTilesHeights[ nMapLayer ], settings.pMaxTilesHeights[ nMapLayer ],
-                    settings.pTiles[ nMapLayer ]
-                );
-
-                BoundsInt bounds = new BoundsInt(
-                    Position.x, Position.y, 0,
-                    ChunkConstants.nChunkSize, ChunkConstants.nChunkSize, 1
-                );
-
-                settings.pMaps[ nMapLayer ].SetTilesBlock( bounds, pLocalTiles[ nMapLayer ] );
-            }
         }
 
         public override TileBase[ ] GetTiles( float flMinTileHeight, float flMaxTileHeight, TileBase pTile ) {

@@ -7,7 +7,6 @@ namespace Scripts.Chunks {
     public interface IChunkRenderer {
         void GenerateHeightMapTexture( Dictionary<Vector2Int, Chunk> aRenderingChunks, Vector2Int vStartChunk );
         void SetupMaterials( Material[ ] materials, Vector2 vMapPos );
-        void SetupTiles( Dictionary<Vector2Int, Chunk> aRenderingChunks, TileSetupperSettings settings );
     }
 
     public class ChunkRenderer : IChunkRenderer {
@@ -38,11 +37,6 @@ namespace Scripts.Chunks {
                 material.SetFloat( "_CurrentWorldTextureScale", 1.0f / ChunkConstants.nChunksSizeInLine );
                 material.SetVector( "_CurrentWorldTexturePos", vMapPos );
             }
-        }
-
-        public void SetupTiles( Dictionary<Vector2Int, Chunk> aRenderingChunks, TileSetupperSettings settings ) {
-            foreach (var element in aRenderingChunks)
-                element.Value.SetupTiles( settings );
         }
     }
 }
