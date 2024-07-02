@@ -6,13 +6,22 @@
             "id": "9316c292-eb82-464c-8a62-7b5665d3e726",
             "actions": [
                 {
-                    "name": "Move",
+                    "name": "Direction",
                     "type": "Value",
                     "id": "ee423f17-bc51-4e59-955f-4a4fec08e839",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Boost",
+                    "type": "Button",
+                    "id": "7a3cc6bb-bd7b-4833-a98a-08248da96886",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -23,7 +32,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Direction",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -34,7 +43,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Direction",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -45,7 +54,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Direction",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -56,7 +65,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Direction",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -67,9 +76,20 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Direction",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "10b2165a-a57e-4f6c-9ef2-ce28f3b734d3",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Boost",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
