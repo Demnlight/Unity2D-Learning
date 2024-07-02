@@ -34,6 +34,7 @@ namespace Scripts.Perlin {
             }
 
             flHeight = Mathf.InverseLerp( -1f, 1f, flHeight );
+            flHeight = (float)System.Math.Pow( flHeight, 1.5f );
             flHeight = AdditionalMath.RoundUp( flHeight, 2 );
 
             return flHeight;
