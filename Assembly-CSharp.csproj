@@ -65,14 +65,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets/BaseEntity/Player/PlayerInputActions.cs" />
-    <Compile Include="Assets/MapGenerator/ChunksData.cs" />
-    <Compile Include="Assets/MapGenerator/MapGeneratorHelper.cs" />
+    <Compile Include="Assets/MapGenerator/PerlinGenerator.cs" />
     <Compile Include="Assets/BaseEntity/Player/Movement.cs" />
     <Compile Include="Assets/BaseEntity/Player/PlayerMovement.cs" />
+    <Compile Include="Assets/MapGenerator/Chunk.cs" />
     <Compile Include="Assets/BaseEntity/Camera/FovManager.cs" />
     <Compile Include="Assets/Initialization.cs" />
+    <Compile Include="Assets/MapGenerator/ChunkConstants.cs" />
     <Compile Include="Assets/BaseEntity/Camera/FollowPlayer.cs" />
-    <Compile Include="Assets/MapGenerator/Generator.cs" />
+    <Compile Include="Assets/MapGenerator/MapGenerator.cs" />
+    <Compile Include="Assets/MapGenerator/AdditionalMath.cs" />
+    <Compile Include="Assets/MapGenerator/ChunkManager.cs" />
+    <Compile Include="Assets/MapGenerator/ChunksHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />
