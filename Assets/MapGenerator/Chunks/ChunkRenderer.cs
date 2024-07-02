@@ -1,0 +1,48 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Scripts.Chunks {
+
+    public interface IChunkRenderer {
+        void GenerateHeightMapTexture( Dictionary<Vector2Int, Chunk> aRenderingChunks, Vector2Int vStartChunk );
+        void SetupMaterials( Material[ ] materials, Vector2 vMapPos );
+        void SetupTiles( Dictionary<Vector2Int, Chunk> aRenderingChunks, TileSetupperSettings settings );
+    }
+
+    public class ChunkRenderer : IChunkRenderer {
+        protected Texture2D HeightMapTexture = null;
+
+        public void GenerateHeightMapTexture( Dictionary<Vector2Int, Chunk> aRenderingChunks, Vector2Int vStartChunk ) {
+            HeightMapTexture = new Texture2D( ChunkConstants.nChunksSizeInLine, ChunkConstants.nChunksSizeInLine );
+            foreach (var element in aRenderingChunks) {
+                for (int x = 0; x < ChunkConstants.nChunkSize; x++) {
+                    for (int y = 0; y < ChunkConstants.nChunkSize; y++) {
+                        float height = element.Value.GetMapHeights[ x, y ];
+                        Color colour = new Color( height, height, height, 1 );
+
+                        int nStartPosX = System.Math.Abs( element.Value.vPos.x - aRenderingChunks[ vStartChunk ].vPos.x );
+                        int nStartPosY = System.Math.Abs( element.Value.vPos.y - aRenderingChunks[ vStartChunk ].vPos.y );
+
+                        HeightMapTexture.SetPixel( nStartPosX + x, nStartPosY + y, colour );
+                    }
+                }
+            }
+
+            HeightMapTexture.Apply( );
+        }
+        
+        public void SetupMaterials( Material[ ] materials, Vector2 vMapPos ) {
+            foreach (var material in materials) {
+                material.SetTexture( "_HeightMap", HeightMapTexture );
+                material.SetFloat( "_CurrentWorldTextureScale", 1.0f / ChunkConstants.nChunksSizeInLine );
+                material.SetVector( "_CurrentWorldTexturePos", vMapPos );
+            }
+        }
+
+        public void SetupTiles( Dictionary<Vector2Int, Chunk> aRenderingChunks, TileSetupperSettings settings ) {
+            foreach (var element in aRenderingChunks)
+                element.Value.SetupTiles( settings );
+        }
+    }
+}
