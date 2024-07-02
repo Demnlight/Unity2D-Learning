@@ -1,23 +1,34 @@
 using System;
 using Scripts.MapGenerator;
+using Scripts.Movement;
 using UnityEngine;
 
-[RequireComponent( typeof( Rigidbody2D ) )]
-public class playerMovement : MonoBehaviour {
-    [SerializeField, Range( 0, 9999 )] private float maxSpeed = 250f;
-    [SerializeField, Range( 0, 0.99f )] private float friction = 0.9f;
 
+[RequireComponent( typeof( Rigidbody2D ) )]
+public class PlayerMovement : MonoBehaviour {
+    private PlayerInputActions inputActions;
+    private Rigidbody2D rb = null;
+
+    [SerializeField] private Animator pAnimator = null;
+    [SerializeField] private Transform pSkeletonTransform = null;
+    [SerializeField, Range( 0, 1000 )] private float flMaxSpeed = 250f;
+    [SerializeField, Range( 0, 0.99f )] private float flFriction = 0.9f;
     [SerializeField] private Generator mapGenerator = null;
 
-    private Rigidbody2D rb;
-    private PlayerInputActions inputActions;
-    private Vector2 vMovingDirection;
+    //private bool bSwimming = false;
+    private bool bInWater = false;
 
-    private Transform pSkeletonTransform = null;
-    private bool bSwimming = false;
+    private bool bWantBoost = false;
+
+    private SpeedModifers nSpeedModifer = SpeedModifers.NORMAl;
+
+    private Vector2 vMovingDirection = new Vector2( );
+
     public void Init( ) {
+        if (!pSkeletonTransform)
+            throw new InvalidOperationException( "pSkeletonTransform null" );
+
         rb = GetComponent<Rigidbody2D>( );
-        pSkeletonTransform = this.gameObject.transform.GetChild( 0 ).transform;
 
         inputActions = new PlayerInputActions( );
         inputActions.Player.Enable( );
@@ -25,32 +36,55 @@ public class playerMovement : MonoBehaviour {
 
     private void FixedUpdate( ) {
         if (inputActions == null)
-            throw new InvalidOperationException( "inputActions == null" );
+            throw new InvalidOperationException( "inputActions null" );
 
-        vMovingDirection = inputActions.Player.Move.ReadValue<Vector2>( );
+        this.vMovingDirection = inputActions.Player.Direction.ReadValue<Vector2>( );
+        if (this.vMovingDirection == Vector2.zero && rb.velocity.magnitude <= 0)
+            return;
 
-        Vector2 targetVelocity = vMovingDirection * maxSpeed;
+        if (this.nSpeedModifer != SpeedModifers.SWIMMING) {
+            this.bWantBoost = inputActions.Player.Boost.ReadValue<float>( ) > 0;
+            this.nSpeedModifer = this.bWantBoost ? SpeedModifers.BOOSTED : SpeedModifers.NORMAl;
+        }
+        float flLocalMaxSpeed = this.flMaxSpeed * MovementConstants.aSpeedModifiersValues[ this.nSpeedModifer ];
+        this.Move( MovementConstants.aSpeedModifiersValues[ this.nSpeedModifer ] );
+
+        this.pAnimator.SetBool( "IsSwimming", this.nSpeedModifer == SpeedModifers.SWIMMING );
+        this.pAnimator.SetBool( "IsRunning", this.nSpeedModifer == SpeedModifers.BOOSTED );
+        this.pAnimator.SetFloat( "flRunningAnimationSpeed", rb.velocity.magnitude / flLocalMaxSpeed );
+
+        if (this.vMovingDirection.x != 0)
+            this.transform.localScale = new Vector3( this.vMovingDirection.x > 0 ? 1 : -1, 1, 1 );
+        //this.pAnimator.SetBool( "IsWalking", this.nSpeedModifer == SpeedModifers.NORMAl );
+        //this.pAnimator.SetBool( "IsSlowed", this.nSpeedModifer == SpeedModifers.SLOWED );
+    }
+
+    private void Move( float flSpeedModifier = 1.0f ) {
+        float flLocalMaxSpeed = flMaxSpeed * flSpeedModifier;
+
+        Vector2 targetVelocity = vMovingDirection * flLocalMaxSpeed;
         Vector2 speedDiff = targetVelocity - rb.velocity;
         Vector2 accelerationVector = speedDiff * Time.deltaTime;
 
         if (vMovingDirection.magnitude == 0) {
-            rb.velocity = new Vector2( rb.velocity.x * friction, rb.velocity.y * friction );
+            rb.velocity = new Vector2( rb.velocity.x * flFriction, rb.velocity.y * flFriction );
         } else {
             rb.velocity = new Vector2(
-                Mathf.Clamp( rb.velocity.x + accelerationVector.x, -maxSpeed, maxSpeed ),
-                Mathf.Clamp( rb.velocity.y + accelerationVector.y, -maxSpeed, maxSpeed )
+                Mathf.Clamp( rb.velocity.x + accelerationVector.x, -flLocalMaxSpeed, flLocalMaxSpeed ),
+                Mathf.Clamp( rb.velocity.y + accelerationVector.y, -flLocalMaxSpeed, flLocalMaxSpeed )
             );
         }
     }
 
     private void OnTriggerEnter2D( Collider2D other ) {
         if (other.gameObject.CompareTag( "Water" )) {
-            this.bSwimming = true;
+            this.bInWater = true;
         }
     }
+
     private void OnTriggerStay2D( Collider2D other ) {
         if (pSkeletonTransform != null) {
-            if (this.bSwimming) {
+            if (this.bInWater) {
                 Vector2Int vChunkPos = new Vector2Int( );
                 vChunkPos.x = mapGenerator.pHelper.Rounded( this.transform.position.x / Scripts.MapGenerator.ChunkConsts.nChunkSize ) * Scripts.MapGenerator.ChunkConsts.nChunkSize;
                 vChunkPos.y = mapGenerator.pHelper.Rounded( this.transform.position.y / Scripts.MapGenerator.ChunkConsts.nChunkSize ) * Scripts.MapGenerator.ChunkConsts.nChunkSize;
@@ -72,13 +106,18 @@ public class playerMovement : MonoBehaviour {
                 float flDistance2D = Vector3.Distance( pSkeletonTransform.localPosition, vTargetPos );
                 float flProgress = Math.Max( 1.0f, flDistance2D );
 
-                pSkeletonTransform.localPosition = Vector3.LerpUnclamped( pSkeletonTransform.localPosition, vTargetPos, flProgress * 3 * Time.deltaTime );
+                pSkeletonTransform.localPosition = Vector3.LerpUnclamped( pSkeletonTransform.localPosition, vTargetPos, flProgress * 5 * Time.deltaTime );
+
+                this.nSpeedModifer = flCurrentHeight >= 1.75f ? SpeedModifers.SWIMMING : SpeedModifers.NORMAl;
             }
         }
     }
+
     private void OnTriggerExit2D( Collider2D other ) {
         if (other.gameObject.CompareTag( "Water" )) {
-            this.bSwimming = false;
+            this.bInWater = false;
+
+            pSkeletonTransform.localPosition = new Vector3( 0, 0, 0 );
         }
     }
 }

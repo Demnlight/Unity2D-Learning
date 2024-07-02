@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class Initialization : MonoBehaviour {
-    [SerializeField] private playerMovement playerMovement;
+    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private FovManager fovManager;
     [SerializeField] private Generator generator;
 

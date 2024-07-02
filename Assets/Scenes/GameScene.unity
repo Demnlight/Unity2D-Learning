@@ -122,6 +122,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!4 &222197728 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7478621442821964538, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+    type: 3}
+  m_PrefabInstance: {fileID: 522595138}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &248166469
 GameObject:
   m_ObjectHideFlags: 0
@@ -1436,9 +1442,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c521b88f9b7a90429edef30f313fc94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 5
-  friction: 0.9
+  pAnimator: {fileID: 1265153564}
+  pSkeletonTransform: {fileID: 222197728}
+  flMaxSpeed: 5
+  flFriction: 0.9
   mapGenerator: {fileID: 304237356}
+--- !u!95 &1265153564 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4105362945620786468, guid: ebea5f8b8163f9a4ab9d9a1b45444e28,
+    type: 3}
+  m_PrefabInstance: {fileID: 522595138}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1299320821
 GameObject:
   m_ObjectHideFlags: 0
