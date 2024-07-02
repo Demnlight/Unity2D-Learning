@@ -65,12 +65,25 @@ namespace Scripts.Chunks {
                     vStartPos.y + vChunkOffset.y * ChunkConstants.nChunkSize );
 
                 Chunk offsetChunk = GetChunk( nChunkStartPos );
-                if (!offsetChunk.bRendering) {
-                    offsetChunk.bRendering = true;
-                    aRenderingChunks.Add( offsetChunk.vPos, offsetChunk );
-                    Debug.LogFormat( "Generated: {0}", offsetChunk.vPos );
+                if (!offsetChunk.IsRendering) {
+                    offsetChunk.Rendering( );
+
+                    for (int layer = 0; layer < tileSetupperSettings.pMaps.Length; layer++) {
+                        TileData tileData = new TileData {
+                            pTileMap = tileSetupperSettings.pMaps[ layer ],
+                            pTileForFill = tileSetupperSettings.pTiles[ layer ],
+                            flMinHeight = tileSetupperSettings.pMinTilesHeights[ layer ],
+                            flMaxHeight = tileSetupperSettings.pMaxTilesHeights[ layer ]
+                        };
+
+                        offsetChunk.FillTileMap( tileData );
+                    }
+
+                    aRenderingChunks.Add( offsetChunk.GetPosition, offsetChunk );
+                    //Debug.LogFormat( "Generated: {0}", offsetChunk.GetPosition );
                 }
             }
+
             List<Vector2Int> aClearedPositions = this.GetClearedFarChunks( this.aRenderingChunks, vStartPos, ChunkConstants.nRenderDistanceScaled );
             this.GetClearedFarChunks( this.aCachedChunks, vStartPos, ChunkConstants.nRenderDistanceScaled * 2 );
             this.ClearTileMaps( aClearedPositions );
@@ -79,7 +92,6 @@ namespace Scripts.Chunks {
 
             base.GenerateHeightMapTexture( this.aRenderingChunks, vStartChunk );
             base.SetupMaterials( tileSetupperSettings.aMaterials, vStartChunk );
-            base.SetupTiles( this.aRenderingChunks, tileSetupperSettings );
         }
 
         public Vector2Int ConvertGlobalPosToLocal( Vector2 vGlobalPos ) {
@@ -97,17 +109,19 @@ namespace Scripts.Chunks {
         }
 
         public void GenerateChunk( Vector2Int vChunkPos ) {
-            Chunk NewChunk = new Chunk {
-                Position = vChunkPos,
+
+            ChunkData data = new ChunkData {
+                vPos = vChunkPos,
                 bRendering = false
             };
+
+            Chunk NewChunk = new Chunk( data );
             NewChunk.GenerateHeightMap( );
             this.aCachedChunks.Add( vChunkPos, NewChunk );
         }
 
         public void GenerateChunk( int x, int y ) =>
             this.GenerateChunk( new Vector2Int( x * ChunkConstants.nChunkSize, y * ChunkConstants.nChunkSize ) );
-
 
         public Vector2Int GetStartChunk( ) {
             Vector2Int vReturn = Vector2Int.zero;
@@ -116,10 +130,10 @@ namespace Scripts.Chunks {
             int nMinY = int.MaxValue;
 
             foreach (var pChunk in this.aRenderingChunks) {
-                if (pChunk.Value.vPos.x < nMinX)
-                    nMinX = pChunk.Value.vPos.x;
-                if (pChunk.Value.vPos.y < nMinY)
-                    nMinY = pChunk.Value.vPos.y;
+                if (pChunk.Value.GetPosition.x < nMinX)
+                    nMinX = pChunk.Value.GetPosition.x;
+                if (pChunk.Value.GetPosition.y < nMinY)
+                    nMinY = pChunk.Value.GetPosition.y;
 
             }
             vReturn = new Vector2Int( nMinX, nMinY );
@@ -141,12 +155,12 @@ namespace Scripts.Chunks {
             List<Vector2Int> vToRemoveCoords = new List<Vector2Int>( );
             foreach (Chunk pChunk in pChunks.Values) {
                 if (pChunk.IsFar( vStartPos, nMaxDistance ))
-                    vToRemoveCoords.Add( pChunk.Position );
+                    vToRemoveCoords.Add( pChunk.GetPosition );
             }
 
             foreach (Vector2Int vCoords in vToRemoveCoords) {
                 pChunks.Remove( vCoords );
-                Debug.LogFormat( "Removed: {0}", vCoords );
+                //Debug.LogFormat( "Removed: {0}", vCoords );
             }
 
             return vToRemoveCoords;
@@ -178,7 +192,7 @@ namespace Scripts.Chunks {
                 if (!this.aCachedChunks.ContainsKey( vChunkPos ))
                     GenerateChunk( vChunkPos );
 
-                this.aCachedChunks[ vChunkPos ].bRendering = false;
+                this.aCachedChunks[ vChunkPos ].NotRendering( );
                 return this.aCachedChunks[ vChunkPos ];
             }
         }
