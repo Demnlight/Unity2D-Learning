@@ -16,20 +16,15 @@ namespace Scripts.Chunks {
     }
 
     public interface IChunkManager {
-
         Vector2Int ConvertGlobalPosToLocal( Vector2 vGlobalPos );
 
         Chunk GetChunk( int x, int y );
         Chunk GetChunk( Vector2Int vChunkPos );
+        Vector2Int GetStartChunk( );
 
         void GenerateChunk( Vector2Int vChunkPos );
         void GenerateChunk( int x, int y );
-
         void GenerateChunksAround( Vector2Int vStartPos, int nGenerateDistance );
-        void GenerateHeightMapTexture( );
-        void SetupMaterialData( Material material );
-
-        Vector2Int GetStartChunk( );
 
         void ClearAllRenderingChunks( );
         void ClearAllCachedChunks( );
@@ -39,10 +34,9 @@ namespace Scripts.Chunks {
         void ClearTileMaps( List<Vector2Int> vRemovedChunksCoord );
     }
 
-    public class ChunkManager : IChunkManager {
+    public class ChunkManager : ChunkRenderer, IChunkManager {
         private ChunksHelper chunksHelper = new ChunksHelper( );
 
-        private Texture2D HeightMapTexture = null;
         private Vector2Int vStartChunk;
 
         private TileSetupperSettings tileSetupperSettings = new TileSetupperSettings( );
@@ -79,43 +73,13 @@ namespace Scripts.Chunks {
             }
             List<Vector2Int> aClearedPositions = this.GetClearedFarChunks( this.aRenderingChunks, vStartPos, ChunkConstants.nRenderDistanceScaled );
             this.GetClearedFarChunks( this.aCachedChunks, vStartPos, ChunkConstants.nRenderDistanceScaled * 2 );
+            this.ClearTileMaps( aClearedPositions );
 
             vStartChunk = this.GetStartChunk( );
-            this.GenerateHeightMapTexture( );
 
-            foreach (var material in tileSetupperSettings.aMaterials)
-                this.SetupMaterialData( material );
-
-            this.ClearTileMaps( aClearedPositions );
-            foreach (var element in this.aRenderingChunks)
-                element.Value.SetupTiles( this.tileSetupperSettings );
-        }
-
-        public void GenerateHeightMapTexture( ) {
-            HeightMapTexture = new Texture2D( ChunkConstants.nChunksSizeInLine, ChunkConstants.nChunksSizeInLine );
-            foreach (var element in this.aRenderingChunks) {
-                for (int x = 0; x < ChunkConstants.nChunkSize; x++) {
-                    for (int y = 0; y < ChunkConstants.nChunkSize; y++) {
-                        float height = element.Value.GetMapHeights[ x, y ];
-                        Color colour = new Color( height, height, height, 1 );
-
-                        int nStartPosX = System.Math.Abs( element.Value.vPos.x - this.aRenderingChunks[ vStartChunk ].vPos.x );
-                        int nStartPosY = System.Math.Abs( element.Value.vPos.y - this.aRenderingChunks[ vStartChunk ].vPos.y );
-
-                        HeightMapTexture.SetPixel( nStartPosX + x, nStartPosY + y, colour );
-                    }
-                }
-            }
-
-            HeightMapTexture.Apply( );
-        }
-
-        public void SetupMaterialData( Material material ) {
-            Vector2 vMapPos = new Vector2( this.aRenderingChunks[ vStartChunk ].vPos.x, this.aRenderingChunks[ vStartChunk ].vPos.y );
-
-            material.SetTexture( "_HeightMap", this.HeightMapTexture );
-            material.SetFloat( "_CurrentWorldTextureScale", 1.0f / ChunkConstants.nChunksSizeInLine );
-            material.SetVector( "_CurrentWorldTexturePos", vMapPos );
+            base.GenerateHeightMapTexture( this.aRenderingChunks, vStartChunk );
+            base.SetupMaterials( tileSetupperSettings.aMaterials, vStartChunk );
+            base.SetupTiles( this.aRenderingChunks, tileSetupperSettings );
         }
 
         public Vector2Int ConvertGlobalPosToLocal( Vector2 vGlobalPos ) {
@@ -164,6 +128,7 @@ namespace Scripts.Chunks {
 
         public void ClearAllRenderingChunks( ) =>
             this.aRenderingChunks.Clear( );
+
         public void ClearAllCachedChunks( ) =>
             this.aCachedChunks.Clear( );
 
