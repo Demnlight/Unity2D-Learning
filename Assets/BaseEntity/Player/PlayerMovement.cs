@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Scripts.MapGenerator;
 using Scripts.Movement;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 [RequireComponent( typeof( Rigidbody2D ) )]
@@ -24,6 +27,9 @@ public class PlayerMovement : MonoBehaviour {
 
     private Vector2 vMovingDirection = new Vector2( );
 
+    Dictionary<SpeedModifers, IMovement> aMovements = new Dictionary<SpeedModifers, IMovement>( );
+
+    delegate void Move( float flSpeedModifier );
     public void Init( ) {
         if (!pSkeletonTransform)
             throw new InvalidOperationException( "pSkeletonTransform null" );
@@ -32,6 +38,13 @@ public class PlayerMovement : MonoBehaviour {
 
         inputActions = new PlayerInputActions( );
         inputActions.Player.Enable( );
+
+        aMovements = new Dictionary<SpeedModifers, IMovement> {
+            {SpeedModifers.SWIMMING, new SwimmingMovement( ) },
+            {SpeedModifers.SLOWED, new SlowedMovement( ) },
+            {SpeedModifers.NORMAl, new WalkingMovement( ) },
+            {SpeedModifers.BOOSTED, new RunningMovement( ) },
+        };
     }
 
     private void FixedUpdate( ) {
@@ -47,7 +60,15 @@ public class PlayerMovement : MonoBehaviour {
             this.nSpeedModifer = this.bWantBoost ? SpeedModifers.BOOSTED : SpeedModifers.NORMAl;
         }
         float flLocalMaxSpeed = this.flMaxSpeed * MovementConstants.aSpeedModifiersValues[ this.nSpeedModifer ];
-        this.Move( MovementConstants.aSpeedModifiersValues[ this.nSpeedModifer ] );
+
+        MovementDTO movementDTO = new MovementDTO {
+            flFriction = this.flFriction,
+            flMaxSpeed = this.flMaxSpeed,
+            rb = this.rb,
+            vDirection = this.vMovingDirection
+        };
+
+        aMovements[ this.nSpeedModifer ].Move( movementDTO );
 
         this.pAnimator.SetBool( "IsSwimming", this.nSpeedModifer == SpeedModifers.SWIMMING );
         this.pAnimator.SetBool( "IsRunning", this.nSpeedModifer == SpeedModifers.BOOSTED );
@@ -59,22 +80,9 @@ public class PlayerMovement : MonoBehaviour {
         //this.pAnimator.SetBool( "IsSlowed", this.nSpeedModifer == SpeedModifers.SLOWED );
     }
 
-    private void Move( float flSpeedModifier = 1.0f ) {
-        float flLocalMaxSpeed = flMaxSpeed * flSpeedModifier;
+    //private void Move( float flSpeedModifier = 1.0f ) {
 
-        Vector2 targetVelocity = vMovingDirection * flLocalMaxSpeed;
-        Vector2 speedDiff = targetVelocity - rb.velocity;
-        Vector2 accelerationVector = speedDiff * Time.deltaTime;
-
-        if (vMovingDirection.magnitude == 0) {
-            rb.velocity = new Vector2( rb.velocity.x * flFriction, rb.velocity.y * flFriction );
-        } else {
-            rb.velocity = new Vector2(
-                Mathf.Clamp( rb.velocity.x + accelerationVector.x, -flLocalMaxSpeed, flLocalMaxSpeed ),
-                Mathf.Clamp( rb.velocity.y + accelerationVector.y, -flLocalMaxSpeed, flLocalMaxSpeed )
-            );
-        }
-    }
+    //}
 
     private void OnTriggerEnter2D( Collider2D other ) {
         if (other.gameObject.CompareTag( "Water" )) {
