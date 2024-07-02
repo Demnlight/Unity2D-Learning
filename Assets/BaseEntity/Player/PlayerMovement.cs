@@ -59,7 +59,6 @@ public class PlayerMovement : MonoBehaviour {
             this.bWantBoost = inputActions.Player.Boost.ReadValue<float>( ) > 0;
             this.nSpeedModifer = this.bWantBoost ? SpeedModifers.BOOSTED : SpeedModifers.NORMAl;
         }
-        float flLocalMaxSpeed = this.flMaxSpeed * MovementConstants.aSpeedModifiersValues[ this.nSpeedModifer ];
 
         MovementDTO movementDTO = new MovementDTO {
             flFriction = this.flFriction,
@@ -72,17 +71,11 @@ public class PlayerMovement : MonoBehaviour {
 
         this.pAnimator.SetBool( "IsSwimming", this.nSpeedModifer == SpeedModifers.SWIMMING );
         this.pAnimator.SetBool( "IsRunning", this.nSpeedModifer == SpeedModifers.BOOSTED );
-        this.pAnimator.SetFloat( "flRunningAnimationSpeed", rb.velocity.magnitude / flLocalMaxSpeed );
+        this.pAnimator.SetFloat( "flRunningAnimationSpeed", rb.velocity.magnitude / this.flMaxSpeed );
 
         if (this.vMovingDirection.x != 0)
             this.transform.localScale = new Vector3( this.vMovingDirection.x > 0 ? 1 : -1, 1, 1 );
-        //this.pAnimator.SetBool( "IsWalking", this.nSpeedModifer == SpeedModifers.NORMAl );
-        //this.pAnimator.SetBool( "IsSlowed", this.nSpeedModifer == SpeedModifers.SLOWED );
     }
-
-    //private void Move( float flSpeedModifier = 1.0f ) {
-
-    //}
 
     private void OnTriggerEnter2D( Collider2D other ) {
         if (other.gameObject.CompareTag( "Water" )) {
