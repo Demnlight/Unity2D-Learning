@@ -231,7 +231,7 @@ MonoBehaviour:
   pMinTilesHeights:
   - 0
   - 0
-  - 0
+  - 0.5
   pMaxTilesHeights:
   - 0.5
   - 0.5
