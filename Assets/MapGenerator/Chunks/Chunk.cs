@@ -2,51 +2,79 @@ using System;
 using System.Numerics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 namespace Scripts.Chunks {
 
-    public abstract class AbstractChunk {
-        public Vector2Int vPos;
-        public abstract Vector2Int Position { get; set; }
-        public float[ , ] aMapHeights;
-        public bool bRendering = false;
-        public abstract float[ , ] GetMapHeights { get; }
-        public abstract void GenerateHeightMap( );
-        public abstract TileBase[ ] GetTiles( float flMinTileHeight, float flMaxTileHeight, TileBase pTile );
+    public struct TileData {
+        public Tilemap pTileMap;
+        public TileBase pTileForFill;
+        public float flMinHeight;
+        public float flMaxHeight;
     }
 
-    public class Chunk : AbstractChunk {
-        public override Vector2Int Position { get => vPos; set => vPos = value; }
-        public override float[ , ] GetMapHeights { get => aMapHeights; }
+    public struct ChunkData {
+        public Vector2Int vPos;
+        public float[ , ] aHeights;
+        public bool bRendering;
+    }
+
+    public interface IChunk {
+        void GenerateHeightMap( );
+        void FillTileMap( TileData tileData );
+    }
+
+    public abstract class BaseChunk : IChunk {
+        protected ChunkData data;
+        public abstract void GenerateHeightMap( );
+        public abstract void FillTileMap( TileData tileData );
+    }
+
+    public class Chunk : BaseChunk {
+
+        public Chunk( ChunkData data ) => this.data = data;
+
+        public Vector2Int GetPosition { get => data.vPos; }
+        public float[ , ] GetHeights { get => data.aHeights; }
+        public bool IsRendering { get => data.bRendering; }
+
+        public void Rendering( ) => this.data.bRendering = true;
+        public void NotRendering( ) => this.data.bRendering = false;
 
         public override void GenerateHeightMap( ) {
-            this.aMapHeights = new float[ ChunkConstants.nChunkSize, ChunkConstants.nChunkSize ];
+            this.data.aHeights = new float[ ChunkConstants.nChunkSize, ChunkConstants.nChunkSize ];
 
             for (int x = 0; x < ChunkConstants.nChunkSize; x++)
                 for (int y = 0; y < ChunkConstants.nChunkSize; y++)
-                    this.aMapHeights[ x, y ] = Initialization.perlinGenerator.GetHeight( this.vPos, new Vector2Int( x, y ) );
+                    this.data.aHeights[ x, y ] = Initialization.perlinGenerator.GetHeight( this.data.vPos, new Vector2Int( x, y ) );
         }
 
-        public override TileBase[ ] GetTiles( float flMinTileHeight, float flMaxTileHeight, TileBase pTile ) {
-            TileBase[ ] pTiles = new TileBase[ ChunkConstants.nChunkSize * ChunkConstants.nChunkSize ];
+        public override void FillTileMap( TileData tileData ) {
+            TileBase[ ] aTilesBlock = new TileBase[ ChunkConstants.nChunkSize * ChunkConstants.nChunkSize ];
 
             int i = 0;
             for (int y = 0; y < ChunkConstants.nChunkSize; y++) {
                 for (int x = 0; x < ChunkConstants.nChunkSize; x++) {
+                    float flHeight = this.data.aHeights[ x, y ];
 
-                    float flHeight = this.aMapHeights[ x, y ];
-                    if (flHeight >= flMinTileHeight && flHeight <= flMaxTileHeight)
-                        pTiles[ i ] = pTile;
+                    if (flHeight >= tileData.flMinHeight && flHeight <= tileData.flMaxHeight)
+                        aTilesBlock[ i ] = tileData.pTileForFill;
+
                     i++;
                 }
             }
 
-            return pTiles;
+            BoundsInt FillArea = new BoundsInt(
+                this.data.vPos.x, this.data.vPos.y, 0,
+                ChunkConstants.nChunkSize, ChunkConstants.nChunkSize, 1
+            );
+
+            tileData.pTileMap.SetTilesBlock( FillArea, aTilesBlock );
         }
 
         public bool IsFar( Vector2Int vFrom, int nMaxDistance ) {
-            int nXDistance = Math.Abs( this.vPos.x - vFrom.x );
-            int nYDistance = Math.Abs( this.vPos.y - vFrom.y );
+            int nXDistance = Math.Abs( this.data.vPos.x - vFrom.x );
+            int nYDistance = Math.Abs( this.data.vPos.y - vFrom.y );
             bool bXOutOfDistance = nXDistance > nMaxDistance;
             bool bYOutOfDistance = nYDistance > nMaxDistance;
 
