@@ -41,24 +41,3 @@ namespace Scripts.Chunks {
         }
     }
 }
-
-/*
-
-    Tiles -> TileBase[chunksize * chunksize]; 
-    area => current_chank.pos + vector(chunksize)
-    TileMap.SetTilesBlock(Area, Array of tiles in area);
-
-
-
-    Abstraction Level: 
-    BaseChunk
-        Chunk
-
-    IChunkRenderer
-        ChunkRenderer
-            ChunkManager
-
-
-    Tiles For fill right abstraction level =>
-    
-*/
