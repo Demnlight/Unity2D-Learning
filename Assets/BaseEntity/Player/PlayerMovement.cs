@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Scripts.MapGenerator;
+using Scripts.AdditionalMath;
+using Scripts.Chunks;
 using Scripts.Movement;
 using UnityEngine;
-using UnityEngine.UIElements;
-
 
 [RequireComponent( typeof( Rigidbody2D ) )]
 public class PlayerMovement : MonoBehaviour {
@@ -16,7 +14,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] private Transform pSkeletonTransform = null;
     [SerializeField, Range( 0, 1000 )] private float flMaxSpeed = 250f;
     [SerializeField, Range( 0, 0.99f )] private float flFriction = 0.9f;
-    [SerializeField] private Generator mapGenerator = null;
+    [SerializeField] private MapGenerator mapGenerator = null;
 
     //private bool bSwimming = false;
     private bool bInWater = false;
@@ -86,17 +84,19 @@ public class PlayerMovement : MonoBehaviour {
     private void OnTriggerStay2D( Collider2D other ) {
         if (pSkeletonTransform != null) {
             if (this.bInWater) {
-                Vector2Int vChunkPos = new Vector2Int( );
-                vChunkPos.x = mapGenerator.pHelper.Rounded( this.transform.position.x / Scripts.MapGenerator.ChunkConsts.nChunkSize ) * Scripts.MapGenerator.ChunkConsts.nChunkSize;
-                vChunkPos.y = mapGenerator.pHelper.Rounded( this.transform.position.y / Scripts.MapGenerator.ChunkConsts.nChunkSize ) * Scripts.MapGenerator.ChunkConsts.nChunkSize;
-                Chunk_t pCurrentChunk = mapGenerator.pChunksData.GetChunk( vChunkPos.x, vChunkPos.y );
+                Vector2Int vChunkPos = new Vector2Int {
+                    x = AdditionalMath.RoundFrom( this.transform.position.x / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize,
+                    y = AdditionalMath.RoundFrom( this.transform.position.y / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize
+                };
+                
+                Chunk pCurrentChunk = mapGenerator.GetChunkManager( ).GetChunk( vChunkPos );
 
                 Vector2Int vPlayerCoordsInChunk = new Vector2Int(
-                    Math.Abs( pCurrentChunk.vPos.x - mapGenerator.pHelper.Rounded( this.transform.position.x ) ),
-                    Math.Abs( pCurrentChunk.vPos.y - mapGenerator.pHelper.Rounded( this.transform.position.y ) )
+                    Math.Abs( pCurrentChunk.vPos.x - AdditionalMath.RoundFrom( this.transform.position.x ) ),
+                    Math.Abs( pCurrentChunk.vPos.y - AdditionalMath.RoundFrom( this.transform.position.y ) )
                 );
 
-                float flCurrentHeight = pCurrentChunk.Heights[ vPlayerCoordsInChunk.x, vPlayerCoordsInChunk.y ];
+                float flCurrentHeight = pCurrentChunk.GetMapHeights[ vPlayerCoordsInChunk.x, vPlayerCoordsInChunk.y ];
 
                 //Debug.LogFormat( "[{0}, {1}], H: {2}, ", vPlayerCoordsInChunk.x, vPlayerCoordsInChunk.y, flCurrentHeight );
                 flCurrentHeight = Mathf.InverseLerp( 0.50f, 0, flCurrentHeight ) * 2.5f;
