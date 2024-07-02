@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour {
         if (inputActions == null)
             throw new InvalidOperationException( "inputActions null" );
 
-        this.vMovingDirection = inputActions.Player.Direction.ReadValue<Vector2>( );
+        this.vMovingDirection = inputActions.Player.Direction.ReadValue<Vector2>( ).normalized;
         if (this.vMovingDirection == Vector2.zero && rb.velocity.magnitude <= 0)
             return;
 
