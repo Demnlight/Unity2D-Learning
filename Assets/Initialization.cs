@@ -9,7 +9,7 @@ public class Initialization : MonoBehaviour {
     public static PerlinGenerator perlinGenerator = new PerlinGenerator( ); //Singleton
 
     [SerializeField, Range( 0, 9999.0f )] private float flPerlinScale = 128.0f;
-    [SerializeField, Range( 0, 9999 )] private int nPerlinOctaves = 5;
+    [SerializeField, Range( 0, 9999 )] private int nPerlinOctaves = 3;
     [SerializeField, Range( 0, 10 )] private float flPersistence = 0.5f;
     [SerializeField, Range( 0, 10 )] private float flLacunarity = 2f;
     [SerializeField, Range( 0, 10 )] private float flPerlinBaseAmplitude = 0.50f;
