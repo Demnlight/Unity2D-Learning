@@ -57,7 +57,7 @@ namespace Scripts.Chunks {
         }
 
         public void GenerateChunksAround( Vector2Int vStartPos, int nGenerateDistance ) {
-            List<Vector2Int> aScaledChunksCoord = chunksHelper.GetChunksAround( nGenerateDistance );
+            IEnumerable<Vector2Int> aScaledChunksCoord = chunksHelper.GetChunksAround( nGenerateDistance );
 
             foreach (Vector2Int vChunkOffset in aScaledChunksCoord) {
                 Vector2Int nChunkStartPos = new Vector2Int(
@@ -179,8 +179,8 @@ namespace Scripts.Chunks {
             }
         }
 
-        public Dictionary<Vector2Int, Chunk> GetRenderingChunks( ) => this.aRenderingChunks;
-        public Dictionary<Vector2Int, Chunk> GetCachedChunks( ) => this.aCachedChunks;
+        public IReadOnlyCollection<KeyValuePair<Vector2Int, Chunk>> GetRenderingChunks( ) => this.aRenderingChunks;
+        public IReadOnlyCollection<KeyValuePair<Vector2Int, Chunk>> GetCachedChunks( ) => this.aCachedChunks;
 
         public Chunk GetChunk( int x, int y ) =>
                     this.GetChunk( new Vector2Int( x * ChunkConstants.nChunkSize, y * ChunkConstants.nChunkSize ) );

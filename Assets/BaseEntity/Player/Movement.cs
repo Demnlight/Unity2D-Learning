@@ -10,7 +10,7 @@ namespace Scripts.Movement {
         BOOSTED
     }
     public class MovementConstants {
-        public static Dictionary<SpeedModifers, float> aSpeedModifiersValues = new Dictionary<SpeedModifers, float> {
+        public static readonly Dictionary<SpeedModifers, float> aSpeedModifiersValues = new Dictionary<SpeedModifers, float> {
             {SpeedModifers.SWIMMING, 0.50f },
             {SpeedModifers.SLOWED, 0.75f },
             {SpeedModifers.NORMAl, 1.0f },
