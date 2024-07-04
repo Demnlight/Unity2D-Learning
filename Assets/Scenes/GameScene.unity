@@ -952,10 +952,10 @@ MonoBehaviour:
   playerMovement: {fileID: 1265153563}
   fovManager: {fileID: 519420035}
   generator: {fileID: 304237356}
-  flPerlinScale: 48
-  nPerlinOctaves: 5
-  flPersistence: 1
-  flLacunarity: 1
+  flPerlinScale: 128
+  nPerlinOctaves: 3
+  flPersistence: 0.5
+  flLacunarity: 2
   flPerlinBaseAmplitude: 0.5
   nSeed: 16275
 --- !u!4 &611928458

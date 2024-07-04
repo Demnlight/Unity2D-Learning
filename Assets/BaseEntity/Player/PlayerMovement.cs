@@ -99,7 +99,7 @@ public class PlayerMovement : MonoBehaviour {
                 float flCurrentHeight = pCurrentChunk.GetHeights[ vPlayerCoordsInChunk.x, vPlayerCoordsInChunk.y ];
 
                 //Debug.LogFormat( "[{0}, {1}], H: {2}, ", vPlayerCoordsInChunk.x, vPlayerCoordsInChunk.y, flCurrentHeight );
-                flCurrentHeight = Mathf.InverseLerp( 0.50f, 0, flCurrentHeight ) * 2.5f;
+                flCurrentHeight = Mathf.InverseLerp( 0.50f, 0.2f, flCurrentHeight ) * 2.5f;
                 //Debug.LogFormat( "SH: {0}", flCurrentHeight );
 
                 Vector3 vTargetPos = new Vector3( 0, -flCurrentHeight, 0 );
@@ -109,7 +109,7 @@ public class PlayerMovement : MonoBehaviour {
 
                 pSkeletonTransform.localPosition = Vector3.LerpUnclamped( pSkeletonTransform.localPosition, vTargetPos, flProgress * 5 * Time.deltaTime );
 
-                this.nSpeedModifer = flCurrentHeight >= 1.75f ? SpeedModifers.SWIMMING : SpeedModifers.NORMAl;
+                this.nSpeedModifer = flCurrentHeight >= 2.5f ? SpeedModifers.SWIMMING : SpeedModifers.NORMAl;
             }
         }
     }
