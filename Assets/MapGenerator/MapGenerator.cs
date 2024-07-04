@@ -54,5 +54,5 @@ public class MapGenerator : MonoBehaviour {
         }
     }
 
-    public ChunkManager GetChunkManager( ) => this.chunkManager;
+    public IChunkManager GetChunkManager( ) => this.chunkManager;
 }
