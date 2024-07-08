@@ -95,16 +95,18 @@ namespace Scripts.Chunks {
         }
 
         public Vector2Int ConvertGlobalPosToLocal( Vector2 vGlobalPos ) {
-            Vector2Int vLocalPos = new Vector2Int( );
-            vLocalPos.x = AdditionalMath.RoundFrom( vGlobalPos.x / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize;
-            vLocalPos.y = AdditionalMath.RoundFrom( vGlobalPos.y / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize;
+            Vector2Int vLocalPos = new Vector2Int {
+                x = AdditionalMath.RoundFrom( vGlobalPos.x / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize,
+                y = AdditionalMath.RoundFrom( vGlobalPos.y / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize
+            };
             return vLocalPos;
         }
 
         public Vector2Int ConvertGlobalPosToLocalScaled( Vector2 vGlobalPos ) {
-            Vector2Int vLocalPos = new Vector2Int( );
-            vLocalPos.x = AdditionalMath.RoundFrom( vGlobalPos.x / ChunkConstants.nChunkSize );
-            vLocalPos.y = AdditionalMath.RoundFrom( vGlobalPos.y / ChunkConstants.nChunkSize );
+            Vector2Int vLocalPos = new Vector2Int {
+                x = AdditionalMath.RoundFrom( vGlobalPos.x / ChunkConstants.nChunkSize ),
+                y = AdditionalMath.RoundFrom( vGlobalPos.y / ChunkConstants.nChunkSize )
+            };
             return vLocalPos;
         }
 
