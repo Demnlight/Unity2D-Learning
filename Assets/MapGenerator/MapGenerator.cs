@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using Scripts.AdditionalMath;
 using Scripts.Chunks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -16,19 +16,31 @@ public class MapGenerator : MonoBehaviour {
     [SerializeField] public float[ ] pMaxTilesHeights = null;
 
     public void Init( ) {
-        if (pTiles == null || pMaps == null || pMinTilesHeights == null || pMaxTilesHeights == null || aMaterials == null)
-            throw new ArgumentNullException( "MapGenerator::Init" );
+        if (pTiles == null)
+            throw new InvalidOperationException( "pTiles null" );
+
+        if (pMaps == null)
+            throw new InvalidOperationException( "pMaps null" );
+
+        if (pMinTilesHeights == null)
+            throw new InvalidOperationException( "pMinTilesHeights null" );
+
+        if (pMaxTilesHeights == null)
+            throw new InvalidOperationException( "pMaxTilesHeights null" );
+
+        if (aMaterials == null)
+            throw new InvalidOperationException( "aMaterials null" );
 
         chunkManager = new ChunkManager( pTiles, pMaps, pMinTilesHeights, pMaxTilesHeights, aMaterials );
         chunkManager.ClearChunks( );
 
-        chunkManager.GenerateChunksAround( chunkManager.ConvertGlobalPosToLocal( pPlayerTransform.position ), ChunkConstants.nRenderDistance );
+        chunkManager.GenerateChunksAround( AdditionalMath.GetCurrentChunkWorldPos( pPlayerTransform.position ), ChunkConstants.nRenderDistance );
     }
 
     void Update( ) {
-        Vector2Int vLocalPosScaled = chunkManager.ConvertGlobalPosToLocalScaled( pPlayerTransform.position );
+        Vector2Int vLocalPosScaled = AdditionalMath.GetCurrentChunkScaledPos( pPlayerTransform.position );
         if (vLastPosition != vLocalPosScaled) {
-            Vector2Int vLocalPos = chunkManager.ConvertGlobalPosToLocal( pPlayerTransform.position );
+            Vector2Int vLocalPos = AdditionalMath.GetCurrentChunkWorldPos( pPlayerTransform.position );
 
             chunkManager.GenerateChunksAround( vLocalPos, ChunkConstants.nRenderDistance );
 
@@ -40,7 +52,7 @@ public class MapGenerator : MonoBehaviour {
         if (chunkManager == null)
             return;
 
-        foreach (var c in chunkManager.GetRenderingChunks( )) {
+        /*foreach (var c in chunkManager.GetRenderingChunks( )) {
             Vector3 ChunkPosition = new Vector3( c.Value.GetPosition.x * ChunkConstants.nChunkSize, c.Value.GetPosition.y * ChunkConstants.nChunkSize );
             for (int x = 0; x < ChunkConstants.nChunkSize; x++) {
                 for (int y = 0; y < ChunkConstants.nChunkSize; y++) {
@@ -51,7 +63,7 @@ public class MapGenerator : MonoBehaviour {
                     Gizmos.DrawCube( vCellPos, Vector3.one );
                 }
             }
-        }
+        }*/
     }
 
     public IChunkManager GetChunkManager( ) => this.chunkManager;

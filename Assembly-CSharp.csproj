@@ -66,6 +66,8 @@
   <ItemGroup>
     <Compile Include="Assets/BaseEntity/Player/PlayerInputActions.cs" />
     <Compile Include="Assets/MapGenerator/PerlinGenerator.cs" />
+    <Compile Include="Assets/BuildSystem/BuildManager.cs" />
+    <Compile Include="Assets/BuildSystem/Cursor.cs" />
     <Compile Include="Assets/BaseEntity/Player/Movement.cs" />
     <Compile Include="Assets/BaseEntity/Player/PlayerMovement.cs" />
     <Compile Include="Assets/MapGenerator/Chunks/ChunkRenderer.cs" />

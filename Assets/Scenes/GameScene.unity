@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 304237355}
   - component: {fileID: 304237354}
   - component: {fileID: 304237356}
+  - component: {fileID: 304237357}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -240,6 +241,19 @@ MonoBehaviour:
   - 0.5
   - 0.5
   - 1
+--- !u!114 &304237357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304237353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c57fd321ff3764408a703f983a2d09bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapGenerator: {fileID: 304237356}
 --- !u!1 &433522022
 GameObject:
   m_ObjectHideFlags: 0
@@ -952,6 +966,7 @@ MonoBehaviour:
   playerMovement: {fileID: 1265153563}
   fovManager: {fileID: 519420035}
   generator: {fileID: 304237356}
+  buildManager: {fileID: 304237357}
   flPerlinScale: 128
   nPerlinOctaves: 3
   flPersistence: 0.5

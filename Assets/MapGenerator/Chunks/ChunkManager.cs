@@ -16,8 +16,6 @@ namespace Scripts.Chunks {
     }
 
     public interface IChunkManager {
-        Vector2Int ConvertGlobalPosToLocal( Vector2 vGlobalPos );
-
         Chunk GetChunk( int x, int y );
         Chunk GetChunk( Vector2Int vChunkPos );
         Vector2Int GetStartChunk( );
@@ -92,22 +90,6 @@ namespace Scripts.Chunks {
 
             base.GenerateHeightMapTexture( this.aRenderingChunks, vStartChunk );
             base.SetupMaterials( tileSetupperSettings.aMaterials, vStartChunk );
-        }
-
-        public Vector2Int ConvertGlobalPosToLocal( Vector2 vGlobalPos ) {
-            Vector2Int vLocalPos = new Vector2Int {
-                x = AdditionalMath.RoundFrom( vGlobalPos.x / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize,
-                y = AdditionalMath.RoundFrom( vGlobalPos.y / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize
-            };
-            return vLocalPos;
-        }
-
-        public Vector2Int ConvertGlobalPosToLocalScaled( Vector2 vGlobalPos ) {
-            Vector2Int vLocalPos = new Vector2Int {
-                x = AdditionalMath.RoundFrom( vGlobalPos.x / ChunkConstants.nChunkSize ),
-                y = AdditionalMath.RoundFrom( vGlobalPos.y / ChunkConstants.nChunkSize )
-            };
-            return vLocalPos;
         }
 
         public void GenerateChunk( Vector2Int vChunkPos ) {

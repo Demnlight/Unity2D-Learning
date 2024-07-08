@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Scripts.AdditionalMath {
     public class AdditionalMath {
@@ -16,6 +17,22 @@ namespace Scripts.AdditionalMath {
                 nReturn = -(int)Math.Ceiling( Math.Abs( flFrom ) );
 
             return nReturn;
+        }
+
+        public static Vector2Int GetCurrentChunkWorldPos( Vector2 vGlobalPos ) {
+            Vector2Int vLocalPos = new Vector2Int {
+                x = RoundFrom( vGlobalPos.x / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize,
+                y = RoundFrom( vGlobalPos.y / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize
+            };
+            return vLocalPos;
+        }
+
+        public static Vector2Int GetCurrentChunkScaledPos( Vector2 vGlobalPos ) {
+            Vector2Int vLocalPos = new Vector2Int {
+                x = RoundFrom( vGlobalPos.x / ChunkConstants.nChunkSize ),
+                y = RoundFrom( vGlobalPos.y / ChunkConstants.nChunkSize )
+            };
+            return vLocalPos;
         }
     }
 }

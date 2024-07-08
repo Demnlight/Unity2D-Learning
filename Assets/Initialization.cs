@@ -1,10 +1,13 @@
+using System;
 using Scripts.Perlin;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Initialization : MonoBehaviour {
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private FovManager fovManager;
     [SerializeField] private MapGenerator generator;
+    [SerializeField] private BuildManager buildManager;
 
     public static PerlinGenerator perlinGenerator = new PerlinGenerator( ); //Singleton
 
@@ -16,6 +19,21 @@ public class Initialization : MonoBehaviour {
     [SerializeField, Range( 0, 320000 )] private int nSeed = 16275;
 
     private void Awake( ) {
+        if (fovManager == null)
+            throw new InvalidOperationException( "fovManager null" );
+
+        if (playerMovement == null)
+            throw new InvalidOperationException( "playerMovement null" );
+
+        if (perlinGenerator == null)
+            throw new InvalidOperationException( "perlinGenerator null" );
+
+        if (generator == null)
+            throw new InvalidOperationException( "generator null" );
+
+        if (buildManager == null)
+            throw new InvalidOperationException( "buildManager null" );
+
         fovManager.Init( );
         playerMovement.Init( );
 
@@ -35,5 +53,6 @@ public class Initialization : MonoBehaviour {
         perlinGenerator.Settings = Settings;
 
         generator.Init( );
+        buildManager.Init( );
     }
 }
