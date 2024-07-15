@@ -32,6 +32,12 @@ public class PlayerMovement : MonoBehaviour {
         if (!pSkeletonTransform)
             throw new InvalidOperationException( "pSkeletonTransform null" );
 
+        if (mapGenerator == null)
+            throw new InvalidOperationException( "mapGenerator null" );
+
+        if (pAnimator == null)
+            throw new InvalidOperationException( "pAnimator null" );
+
         rb = GetComponent<Rigidbody2D>( );
 
         inputActions = new PlayerInputActions( );
@@ -88,18 +94,18 @@ public class PlayerMovement : MonoBehaviour {
                     x = AdditionalMath.RoundFrom( this.transform.position.x / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize,
                     y = AdditionalMath.RoundFrom( this.transform.position.y / ChunkConstants.nChunkSize ) * ChunkConstants.nChunkSize
                 };
-                
+
                 Chunk pCurrentChunk = mapGenerator.GetChunkManager( ).GetChunk( vChunkPos );
 
                 Vector2Int vPlayerCoordsInChunk = new Vector2Int(
-                    Math.Abs( pCurrentChunk.vPos.x - AdditionalMath.RoundFrom( this.transform.position.x ) ),
-                    Math.Abs( pCurrentChunk.vPos.y - AdditionalMath.RoundFrom( this.transform.position.y ) )
+                    Math.Abs( pCurrentChunk.GetPosition.x - AdditionalMath.RoundFrom( this.transform.position.x ) ),
+                    Math.Abs( pCurrentChunk.GetPosition.y - AdditionalMath.RoundFrom( this.transform.position.y ) )
                 );
 
-                float flCurrentHeight = pCurrentChunk.GetMapHeights[ vPlayerCoordsInChunk.x, vPlayerCoordsInChunk.y ];
+                float flCurrentHeight = pCurrentChunk.GetHeights[ vPlayerCoordsInChunk.x, vPlayerCoordsInChunk.y ];
 
                 //Debug.LogFormat( "[{0}, {1}], H: {2}, ", vPlayerCoordsInChunk.x, vPlayerCoordsInChunk.y, flCurrentHeight );
-                flCurrentHeight = Mathf.InverseLerp( 0.50f, 0, flCurrentHeight ) * 2.5f;
+                flCurrentHeight = Mathf.InverseLerp( 0.50f, 0.2f, flCurrentHeight ) * 2.5f;
                 //Debug.LogFormat( "SH: {0}", flCurrentHeight );
 
                 Vector3 vTargetPos = new Vector3( 0, -flCurrentHeight, 0 );
@@ -109,7 +115,7 @@ public class PlayerMovement : MonoBehaviour {
 
                 pSkeletonTransform.localPosition = Vector3.LerpUnclamped( pSkeletonTransform.localPosition, vTargetPos, flProgress * 5 * Time.deltaTime );
 
-                this.nSpeedModifer = flCurrentHeight >= 1.75f ? SpeedModifers.SWIMMING : SpeedModifers.NORMAl;
+                this.nSpeedModifer = flCurrentHeight >= 2.5f ? SpeedModifers.SWIMMING : SpeedModifers.NORMAl;
             }
         }
     }

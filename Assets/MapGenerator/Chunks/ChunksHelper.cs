@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Scripts.Chunks {
 
     public interface IChunksHelper {
-        List<Vector2Int> GetChunksAround( int nGenerateDistance );
+        IEnumerable<Vector2Int> GetChunksAround( int nGenerateDistance );
     }
 
     public class ChunksHelper : IChunksHelper {
-        public List<Vector2Int> GetChunksAround( int nGenerateDistance ) {
+        public IEnumerable<Vector2Int> GetChunksAround( int nGenerateDistance ) {
             List<Vector2Int> aChunksAround = new List<Vector2Int>( );
 
             for (int x = -nGenerateDistance; x <= nGenerateDistance; x++) {

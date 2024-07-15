@@ -12,6 +12,7 @@ TagManager:
   - HasMask
   - PlayerRenderMask
   - PlayerSkeleton
+  - MainGrid
   layers:
   - Default
   - TransparentFX

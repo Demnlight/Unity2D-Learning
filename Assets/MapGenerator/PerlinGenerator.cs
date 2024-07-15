@@ -11,9 +11,11 @@ namespace Scripts.Perlin {
         public float flPerlinBaseAmplitude;
         public Vector2[ ] vRandomOffsets;
     }
+
     public interface IPerlinGenerator {
         float GetHeight( Vector2Int vGlobalPos, Vector2Int vLocalPos );
     }
+    
     public class PerlinGenerator : IPerlinGenerator {
         public PerlinGeneratorSettings Settings = new PerlinGeneratorSettings( );
 
@@ -34,6 +36,10 @@ namespace Scripts.Perlin {
             }
 
             flHeight = Mathf.InverseLerp( -1f, 1f, flHeight );
+            
+            if (flHeight <= 0.5f)
+                flHeight = (float)System.Math.Pow( flHeight, 2.5f - flHeight );
+
             flHeight = AdditionalMath.RoundUp( flHeight, 2 );
 
             return flHeight;
