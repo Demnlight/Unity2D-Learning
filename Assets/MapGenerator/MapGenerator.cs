@@ -75,14 +75,14 @@ public class MapGenerator : MonoBehaviour {
     }
 
     private Tilemap[ ] GenerateTileMaps( ) {
-        const int nTileMapsCount = 3;
+        const int nTileMapsCount = 4;
         Transform parent = GameObject.FindGameObjectWithTag( "MainGrid" ).transform;
         TilemapGenerator_t tilemapGenerator = new TilemapGenerator_t {
             nTileMapsCount = nTileMapsCount,
-            aTileMapsNames = new string[ nTileMapsCount ] { "WaterShadowMap", "WaterMap", "SandMap" },
-            aParents = new Transform[ nTileMapsCount ] { parent, parent, parent },
-            aColors = new Color[ nTileMapsCount ] { new Color( 0, 0, 137f / 255.0f, 25.0f / 255.0f ), Color.white, Color.white },
-            aPositions = new Vector3[ nTileMapsCount ] { new Vector3( 0, 0, 0.1f ), new Vector3( 0, 0, 0.0f ), new Vector3( 0, 0, 0.9f ) },
+            aTileMapsNames = new string[ nTileMapsCount ] { "WaterShadowMap", "WaterMap", "SandMap", "BuildMap" },
+            aParents = new Transform[ nTileMapsCount ] { parent, parent, parent, parent },
+            aColors = new Color[ nTileMapsCount ] { new Color( 0, 0, 137f / 255.0f, 25.0f / 255.0f ), Color.white, Color.white, Color.white },
+            aPositions = new Vector3[ nTileMapsCount ] { new Vector3( 0, 0, 0.1f ), new Vector3( 0, 0, 0.0f ), new Vector3( 0, 0, 0.9f ), new Vector3( 0, 0, 0.0f ) },
             aMaterials = aMaterials,
         };
 
