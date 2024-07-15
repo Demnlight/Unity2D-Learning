@@ -32,6 +32,12 @@ public class PlayerMovement : MonoBehaviour {
         if (!pSkeletonTransform)
             throw new InvalidOperationException( "pSkeletonTransform null" );
 
+        if (mapGenerator == null)
+            throw new InvalidOperationException( "mapGenerator null" );
+
+        if (pAnimator == null)
+            throw new InvalidOperationException( "pAnimator null" );
+
         rb = GetComponent<Rigidbody2D>( );
 
         inputActions = new PlayerInputActions( );
