@@ -16,8 +16,8 @@ public class MapGenerator : MonoBehaviour {
 
     private Tilemap[ ] pMaps = null;
 
-    [SerializeField] public float[ ] pMinTilesHeights = null;
-    [SerializeField] public float[ ] pMaxTilesHeights = null;
+    [SerializeField] private float[ ] pMinTilesHeights = null;
+    [SerializeField] private float[ ] pMaxTilesHeights = null;
 
     public void Init( ) {
         if (pTiles == null)
@@ -26,18 +26,7 @@ public class MapGenerator : MonoBehaviour {
         if (objectsGenerator == null)
             throw new InvalidOperationException( "Objects Generator null" );
 
-        const int nTileMapsCount = 3;
-        Transform parent = GameObject.FindGameObjectWithTag( "MainGrid" ).transform;
-        TilemapGenerator_t tilemapGenerator = new TilemapGenerator_t {
-            nTileMapsCount = nTileMapsCount,
-            aTileMapsNames = new string[ nTileMapsCount ] { "WaterShadowMap", "WaterMap", "SandMap" },
-            aParents = new Transform[ nTileMapsCount ] { parent, parent, parent },
-            aColors = new Color[ nTileMapsCount ] { new Color( 0, 0, 137f / 255.0f, 25.0f / 255.0f ), Color.white, Color.white },
-            aPositions = new Vector3[ nTileMapsCount ] { new Vector3( 0, 0, 0.1f ), new Vector3( 0, 0, 0.0f ), new Vector3( 0, 0, 0.9f ) },
-            aMaterials = aMaterials,
-        };
-
-        pMaps = objectsGenerator.GenerateTileMaps( tilemapGenerator );
+        pMaps = this.GenerateTileMaps( );
         if (pMaps == null)
             throw new InvalidOperationException( "pMaps null" );
 
@@ -83,6 +72,21 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
         }*/
+    }
+
+    private Tilemap[ ] GenerateTileMaps( ) {
+        const int nTileMapsCount = 3;
+        Transform parent = GameObject.FindGameObjectWithTag( "MainGrid" ).transform;
+        TilemapGenerator_t tilemapGenerator = new TilemapGenerator_t {
+            nTileMapsCount = nTileMapsCount,
+            aTileMapsNames = new string[ nTileMapsCount ] { "WaterShadowMap", "WaterMap", "SandMap" },
+            aParents = new Transform[ nTileMapsCount ] { parent, parent, parent },
+            aColors = new Color[ nTileMapsCount ] { new Color( 0, 0, 137f / 255.0f, 25.0f / 255.0f ), Color.white, Color.white },
+            aPositions = new Vector3[ nTileMapsCount ] { new Vector3( 0, 0, 0.1f ), new Vector3( 0, 0, 0.0f ), new Vector3( 0, 0, 0.9f ) },
+            aMaterials = aMaterials,
+        };
+
+        return objectsGenerator.GenerateTileMaps( tilemapGenerator );
     }
 
     public IChunkManager GetChunkManager( ) => this.chunkManager;
