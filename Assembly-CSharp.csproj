@@ -70,6 +70,7 @@
     <Compile Include="Assets/BuildSystem/Cursor.cs" />
     <Compile Include="Assets/BaseEntity/Player/Movement.cs" />
     <Compile Include="Assets/BaseEntity/Player/PlayerMovement.cs" />
+    <Compile Include="Assets/BuildSystem/Build/ObjectSetupper.cs" />
     <Compile Include="Assets/MapGenerator/Chunks/ChunkRenderer.cs" />
     <Compile Include="Assets/MapGenerator/Chunks/ChunksHelper.cs" />
     <Compile Include="Assets/BaseEntity/Camera/FovManager.cs" />

@@ -67,4 +67,8 @@ public class MapGenerator : MonoBehaviour {
     }
 
     public IChunkManager GetChunkManager( ) => this.chunkManager;
+
+    public TileBase GetTileBase { get { return this.pTiles[ this.pTiles.Length - 1 ]; } }
+    public Tilemap GetTileMap { get { return this.pMaps[ this.pMaps.Length - 1 ]; } }
+    public Material GetMaterial { get { return this.aMaterials[ this.aMaterials.Length - 1 ]; } }
 }
