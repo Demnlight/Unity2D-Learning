@@ -1,17 +1,21 @@
 using System;
 using Scripts.AdditionalMath;
 using Scripts.Chunks;
+using Scripts.MapGenerator;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class MapGenerator : MonoBehaviour {
     private ChunkManager chunkManager;
+    private SceneObjectsGenerator objectsGenerator = new SceneObjectsGenerator( );
     private Vector2Int vLastPosition = Vector2Int.zero;
 
     [SerializeField] private Transform pPlayerTransform;
     [SerializeField] private Material[ ] aMaterials;
     [SerializeField] private TileBase[ ] pTiles = null;
-    [SerializeField] public Tilemap[ ] pMaps = null;
+
+    private Tilemap[ ] pMaps = null;
+
     [SerializeField] public float[ ] pMinTilesHeights = null;
     [SerializeField] public float[ ] pMaxTilesHeights = null;
 
@@ -19,6 +23,21 @@ public class MapGenerator : MonoBehaviour {
         if (pTiles == null)
             throw new InvalidOperationException( "pTiles null" );
 
+        if (objectsGenerator == null)
+            throw new InvalidOperationException( "Objects Generator null" );
+
+        const int nTileMapsCount = 3;
+        Transform parent = GameObject.FindGameObjectWithTag( "MainGrid" ).transform;
+        TilemapGenerator_t tilemapGenerator = new TilemapGenerator_t {
+            nTileMapsCount = nTileMapsCount,
+            aTileMapsNames = new string[ nTileMapsCount ] { "WaterShadowMap", "WaterMap", "SandMap" },
+            aParents = new Transform[ nTileMapsCount ] { parent, parent, parent },
+            aColors = new Color[ nTileMapsCount ] { new Color( 0, 0, 137f / 255.0f, 25.0f / 255.0f ), Color.white, Color.white },
+            aPositions = new Vector3[ nTileMapsCount ] { new Vector3( 0, 0, 0.1f ), new Vector3( 0, 0, 0.0f ), new Vector3( 0, 0, 0.9f ) },
+            aMaterials = aMaterials,
+        };
+
+        pMaps = objectsGenerator.GenerateTileMaps( tilemapGenerator );
         if (pMaps == null)
             throw new InvalidOperationException( "pMaps null" );
 
